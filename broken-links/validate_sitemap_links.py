@@ -1,19 +1,30 @@
+import csv
 import requests
 from bs4 import BeautifulSoup
 
 
-def get_url(url, timeout=10):
+def log_request_info(log_file, url, response_code, timed_out, exception, response_length):
+    with open(log_file, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([url, response_code, timed_out, exception, response_length])
+
+
+def get_url(url, log_file, timeout=10):
     try:
         print(f'Retrieving page from {url}')
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
         print(f'Retrieved page from {url}')
+        response_length = len(response.text) if response.text else 0
+        log_request_info(log_file, url, response.status_code, False, None, response_length)
         return response.text
     except requests.exceptions.Timeout:
         print(f'Error: The request to {url} timed out.')
+        log_request_info(url, None, True, 'Timeout', 0, log_file)
         return None
     except requests.exceptions.RequestException as e:
         print(f'Error: Failed to fetch sitemap from {url}. Details: {e}')
+        log_request_info(url, None, False, str(e), 0, log_file)
         return None
 
 
@@ -34,10 +45,17 @@ def parse_sitemap(sitemap_content):
 def main():
     sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
     sitemap_timeout = 10
+    log_file = 'request_log.csv'
 
-    sitemap_content = get_url(sitemap_url, sitemap_timeout)
+    with open(log_file, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['URL', 'Response Code', 'Timeout', 'Exception', 'Response Length'])
+
+    sitemap_content = get_url(sitemap_url, log_file, sitemap_timeout)
     urls = parse_sitemap(sitemap_content)
     print(urls)
+
+    processed_urls = {get_url(url, log_file) for url in set(urls)}
 
 
 if __name__ == '__main__':

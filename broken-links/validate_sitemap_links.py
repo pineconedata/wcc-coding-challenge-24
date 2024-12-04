@@ -2,10 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def get_sitemap(sitemap_url):
+def get_sitemap(sitemap_url, timeout=10):
     try:
         print(f'Retrieving sitemap from {sitemap_url}')
-        response = requests.get(sitemap_url, timeout=sitemap_timeout)
+        response = requests.get(sitemap_url, timeout=timeout)
         response.raise_for_status()
         print(f'Retrieved sitemap from {sitemap_url}')
         return response.text
@@ -23,13 +23,22 @@ def parse_sitemap(sitemap_content):
         soup = BeautifulSoup(sitemap_content, 'xml')
         urls = [loc.text for loc in soup.find_all('loc')]
         print(f'Parsed sitemap content. Found {len(urls)} URLs.')
+        if not urls:
+            print('No URLs found in the sitemap content.')
         return urls
     except Exception as e:
         print(f'Error: Failed to parse the sitemap XML. Details: {e}')
         return []
 
 
-sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
-sitemap_timeout = 10
-sitemap_content = get_sitemap(sitemap_url)
-parse_sitemap(sitemap_content)
+def main():
+    sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
+    sitemap_timeout = 10
+
+    sitemap_content = get_sitemap(sitemap_url, sitemap_timeout)
+    urls = parse_sitemap(sitemap_content)
+    print(urls)
+
+
+if __name__ == '__main__':
+    main()

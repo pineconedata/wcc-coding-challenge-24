@@ -2,18 +2,18 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def get_sitemap(sitemap_url, timeout=10):
+def get_url(url, timeout=10):
     try:
-        print(f'Retrieving sitemap from {sitemap_url}')
-        response = requests.get(sitemap_url, timeout=timeout)
+        print(f'Retrieving page from {url}')
+        response = requests.get(url, timeout=timeout)
         response.raise_for_status()
-        print(f'Retrieved sitemap from {sitemap_url}')
+        print(f'Retrieved page from {url}')
         return response.text
     except requests.exceptions.Timeout:
-        print(f'Error: The request to {sitemap_url} timed out.')
+        print(f'Error: The request to {url} timed out.')
         return None
     except requests.exceptions.RequestException as e:
-        print(f'Error: Failed to fetch sitemap from {sitemap_url}. Details: {e}')
+        print(f'Error: Failed to fetch sitemap from {url}. Details: {e}')
         return None
 
 
@@ -35,7 +35,7 @@ def main():
     sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
     sitemap_timeout = 10
 
-    sitemap_content = get_sitemap(sitemap_url, sitemap_timeout)
+    sitemap_content = get_url(sitemap_url, sitemap_timeout)
     urls = parse_sitemap(sitemap_content)
     print(urls)
 

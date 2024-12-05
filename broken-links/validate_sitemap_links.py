@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def log_request_info(log_file, url, response_code, timed_out, exception, response_length):
+def log_request_info(url, response_code, timed_out, exception, response_length, log_file):
     with open(log_file, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([url, response_code, timed_out, exception, response_length])
@@ -16,7 +16,7 @@ def get_url(url, log_file, timeout=10):
         response.raise_for_status()
         print(f'Retrieved page from {url}')
         response_length = len(response.text) if response.text else 0
-        log_request_info(log_file, url, response.status_code, False, None, response_length)
+        log_request_info(url, response.status_code, False, None, response_length, log_file)
         return response.text
     except requests.exceptions.Timeout:
         print(f'Error: The request to {url} timed out.')
@@ -42,20 +42,37 @@ def parse_sitemap(sitemap_content):
         return []
 
 
+def is_url_excluded(url, urls_to_exclude, log_file):
+    if url in urls_to_exclude:
+        print(f'Skipping {url} as it is in the excluded list')
+        log_request_info(url, None, False, 'URL in excluded list', 0, log_file)
+        return True
+    return False
+
+
+def validate_url(url, urls_to_exclude, log_file, timeout):
+    if is_url_excluded(url, urls_to_exclude, log_file):
+        return
+    response_content = get_url(url, log_file, timeout)
+    if response_content is not None:
+        print(f'Checking response content for {url}')
+
+
 def main():
     sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
-    sitemap_timeout = 10
+    urls_to_exclude = ['https://www.pineconedata.com/404', 'https://www.pineconedata.com/404.html']
+    request_timeout = 10
     log_file = 'request_log.csv'
 
     with open(log_file, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['URL', 'Response Code', 'Timeout', 'Exception', 'Response Length'])
 
-    sitemap_content = get_url(sitemap_url, log_file, sitemap_timeout)
-    urls = parse_sitemap(sitemap_content)
-    print(urls)
-
-    processed_urls = {get_url(url, log_file) for url in set(urls)}
+    sitemap_content = get_url(sitemap_url, log_file, request_timeout)
+    if sitemap_content:
+        urls = parse_sitemap(sitemap_content)
+        for url in urls:
+            validate_url(url, urls_to_exclude, log_file, request_timeout)
 
 
 if __name__ == '__main__':

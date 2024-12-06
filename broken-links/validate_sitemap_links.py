@@ -45,22 +45,34 @@ def parse_sitemap(sitemap_content):
 def is_url_excluded(url, urls_to_exclude, log_file):
     if url in urls_to_exclude:
         print(f'Skipping {url} as it is in the excluded list')
-        log_request_info(url, None, False, 'URL in excluded list', 0, log_file)
         return True
     return False
 
 
-def validate_url(url, urls_to_exclude, log_file, timeout):
+def contains_excluded_phrases(response_content, phrases_to_exclude):
+    for phrase in phrases_to_exclude:
+        if phrase.lower() in response_content.lower():
+            return True
+    return False
+
+
+def validate_url(url, urls_to_exclude, phrases_to_exclude, log_file, timeout):
     if is_url_excluded(url, urls_to_exclude, log_file):
+        log_request_info(url, None, False, 'URL in excluded list', 0, log_file)
         return
     response_content = get_url(url, log_file, timeout)
+    response_length = len(response_content) if response_content else 0
     if response_content is not None:
-        print(f'Checking response content for {url}')
+        if contains_excluded_phrases(response_content, phrases_to_exclude):
+            print(f'Skipping {url} because it contains an excluded phrase.')
+            log_request_info(url, None, False, 'Contains excluded phrase', response_length, log_file)
+            return
 
 
 def main():
     sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
     urls_to_exclude = ['https://www.pineconedata.com/404', 'https://www.pineconedata.com/404.html']
+    phrases_to_exclude = ['this page doesn\'t exist', 'it is broken']
     request_timeout = 10
     log_file = 'request_log.csv'
 
@@ -72,7 +84,7 @@ def main():
     if sitemap_content:
         urls = parse_sitemap(sitemap_content)
         for url in urls:
-            validate_url(url, urls_to_exclude, log_file, request_timeout)
+            validate_url(url, urls_to_exclude, phrases_to_exclude, log_file, request_timeout)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,16 @@
+URL,Response Code,Exception,Details,Response Length
+https://www.pineconedata.com/2024-09-13-basketbal-train-ols/,200,,,140754
+https://www.pineconedata.com/2024-07-29-basketball-visualizations/,200,,,104913
+https://www.pineconedata.com/2024-05-30-basketball-feature_engineering/,200,,,55969
+https://www.pineconedata.com/2024-05-02-basketball-data-cleaning-preprocessing/,200,,,90245
+https://www.pineconedata.com/2024-04-11-basketball-data-acquisition/,200,,,83683
+https://www.pineconedata.com/2023-11-14-install-jupyterlab/,200,,,65754
+https://www.pineconedata.com/2023-11-07-automated-feed-generator/,200,,,63147
+https://www.pineconedata.com/2023-10-24-site-launch/,200,,,16335
+https://www.pineconedata.com/404.html,,Excluded URL,URL in excluded list,0
+https://www.pineconedata.com/about/,200,,,15271
+https://www.pineconedata.com/,200,,,26839
+https://www.pineconedata.com/privacy-policy/,200,,,29289
+https://www.pineconedata.com/tags/,200,,,30342
+https://www.pineconedata.com/workwithme/,200,,,13465
+https://www.pineconedata.com/page2/,200,,,19859

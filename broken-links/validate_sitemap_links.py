@@ -3,10 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def write_data(data_file, url, response_code, timed_out, exception, response_length):
+def write_data(data_file, url, response_code, exception, details, response_length):
     with open(data_file, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([url, response_code, timed_out, exception, response_length])
+        writer.writerow([url, response_code, exception, details, response_length])
 
 
 def get_url(url, timeout=10):
@@ -16,13 +16,13 @@ def get_url(url, timeout=10):
         response.raise_for_status()
         print(f'Retrieved page from {url}')
         response_length = len(response.text) if response.text else 0
-        return response.status_code, False, None, response_length, response.text
+        return response.status_code, None, None, response_length, response.text
     except requests.exceptions.Timeout:
         print(f'Error: The request to {url} timed out.')
-        return None, True, 'Timeout', 0, None
+        return None, 'Timeout', f'The request exceeded the {timeout} threshold.', 0, None
     except requests.exceptions.RequestException as e:
-        print(f'Error: Failed to fetch sitemap from {url}. Details: {e}')
-        return None, False, str(e), 0, None
+        print(f'Error: Failed to fetch page from {url}. Details: {e}')
+        return None, 'Request Exception', str(e), 0, None
 
 
 def parse_sitemap(sitemap_content):
@@ -50,7 +50,7 @@ def contains_excluded_phrases(response_content, phrases_to_exclude):
     for phrase in phrases_to_exclude:
         if phrase.lower() in response_content.lower():
             print(f'Excluded phrase {phrase} found in page.')
-            return True
+            return phrase
     return False
 
 
@@ -59,35 +59,34 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
     data = {
         'url': url,
         'response_code': None,
-        'timed_out': False,
-        'exception': None,
-        'response_length': 0,
-        'skip_reason': None
+        'exception': False,
+        'details': None,
+        'response_length': 0
     }
 
     # if url is excluded, log and return early
     if is_url_excluded(url, urls_to_exclude):
         data['exception'] = 'Excluded URL'
-        data['skip_reason'] = 'URL in excluded list'
-        write_data(data_file, data['url'], data['response_code'], data['timed_out'],
-                         data['exception'], data['response_length'])
+        data['details'] = 'URL in excluded list'
+        write_data(data_file, data['url'], data['response_code'], data['exception'],
+                   data['details'], data['response_length'])
         return
 
     # get url and update log data
-    response_code, timed_out, exception, response_length, response_content = get_url(url, timeout)
+    response_code, exception, details, response_length, response_content = get_url(url, timeout)
     data['response_code'] = response_code
-    data['timed_out'] = timed_out
     data['exception'] = exception
     data['response_length'] = response_length
 
     # check response content for excluded phrases
     if response_content is not None:
-        if contains_excluded_phrases(response_content, phrases_to_exclude):
+        excluded_phrase = contains_excluded_phrases(response_content, phrases_to_exclude)
+        if excluded_phrase:
             data['exception'] = 'Excluded Phrase'
-            data['skip_reason'] = 'Response content contains excluded phrase.'
+            data['details'] = f'Response content contains an excluded phrase, {excluded_phrase}.'
             return
 
-    write_data(data_file, data['url'], data['response_code'], data['timed_out'], data['exception'], data['response_length'])
+    write_data(data_file, data['url'], data['response_code'], data['exception'], data['details'], data['response_length'])
 
 
 def main():
@@ -95,13 +94,13 @@ def main():
     urls_to_exclude = ['https://www.pineconedata.com/404', 'https://www.pineconedata.com/404.html']
     phrases_to_exclude = ['this page doesn\'t exist', 'it is broken']
     request_timeout = 10
-    data_file = 'request_log.csv'
+    data_file = 'sitemap_link_validation.csv'
 
     with open(data_file, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['URL', 'Response Code', 'Timeout', 'Exception', 'Response Length'])
+        writer.writerow(['URL', 'Response Code', 'Exception', 'Details', 'Response Length'])
 
-    response_code, timed_out, exception, response_length, sitemap_content = get_url(sitemap_url, request_timeout)
+    response_code, exception, details, response_length, sitemap_content = get_url(sitemap_url, request_timeout)
     if sitemap_content:
         urls = parse_sitemap(sitemap_content)
         for url in urls:

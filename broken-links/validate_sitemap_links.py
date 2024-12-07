@@ -20,6 +20,10 @@ def get_url(url, timeout=10):
     except requests.exceptions.Timeout:
         print(f'Error: The request to {url} timed out.')
         return None, 'Timeout', f'The request exceeded the {timeout} threshold.', 0, None
+    except requests.exceptions.HTTPError as e:
+        error_details = f'HTTPError {e.response.status_code} - {e.response.reason}'
+        print(f'Error: {error_details} at {url}')
+        return e.response.status_code, 'HTTP Error', error_details, 0, None
     except requests.exceptions.RequestException as e:
         print(f'Error: Failed to fetch page from {url}. Details: {e}')
         return None, 'Request Exception', str(e), 0, None

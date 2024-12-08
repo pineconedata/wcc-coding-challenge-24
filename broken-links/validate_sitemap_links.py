@@ -15,18 +15,18 @@ def get_url(url, timeout=10):
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
         print(f'Retrieved page from {url}')
-        response_length = len(response.text) if response.text else 0
-        return response.status_code, None, None, response_length, response.text
-    except requests.exceptions.Timeout:
-        print(f'Error: The request to {url} timed out.')
-        return None, 'Timeout', f'The request exceeded the {timeout} threshold.', 0, None
+        return response, None, None
+    except requests.exceptions.Timeout as e:
+        error_details = f'The request to {url} exceeded the threshold of {timeout}'
+        print(f'Error: {error_details}')
+        return e.response, 'Timeout', error_details
     except requests.exceptions.HTTPError as e:
         error_details = f'HTTPError {e.response.status_code} - {e.response.reason}'
         print(f'Error: {error_details} at {url}')
-        return e.response.status_code, 'HTTP Error', error_details, 0, None
+        return e.response, 'HTTPError', error_details
     except requests.exceptions.RequestException as e:
         print(f'Error: Failed to fetch page from {url}. Details: {e}')
-        return None, 'Request Exception', str(e), 0, None
+        return e.response, 'RequestException', str(e)
 
 
 def parse_sitemap(sitemap_content):
@@ -53,7 +53,7 @@ def is_url_excluded(url, urls_to_exclude):
 def contains_excluded_phrases(response_content, phrases_to_exclude):
     for phrase in phrases_to_exclude:
         if phrase.lower() in response_content.lower():
-            print(f'Excluded phrase {phrase} found in page.')
+            print(f'Excluded phrase "{phrase}" found in page.')
             return phrase
     return False
 
@@ -63,7 +63,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
     data = {
         'url': url,
         'response_code': None,
-        'exception': False,
+        'exception': None,
         'details': None,
         'response_length': 0
     }
@@ -77,18 +77,20 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
         return
 
     # get url and update log data
-    response_code, exception, details, response_length, response_content = get_url(url, timeout)
-    data['response_code'] = response_code
+    response, exception, details = get_url(url, timeout)
     data['exception'] = exception
-    data['response_length'] = response_length
+    data['details'] = details
 
-    # check response content for excluded phrases
-    if response_content is not None:
-        excluded_phrase = contains_excluded_phrases(response_content, phrases_to_exclude)
+    # add response details to output
+    if response is not None:
+        data['response_code'] = response.status_code
+        data['response_length'] = len(response.text) if response.text else 0
+
+        # check response content for excluded phrases
+        excluded_phrase = contains_excluded_phrases(response.text, phrases_to_exclude)
         if excluded_phrase:
             data['exception'] = 'Excluded Phrase'
-            data['details'] = f'Response content contains an excluded phrase, {excluded_phrase}.'
-            return
+            data['details'] = f'Response content contains an excluded phrase: "{excluded_phrase}".'
 
     write_data(data_file, data['url'], data['response_code'], data['exception'], data['details'], data['response_length'])
 
@@ -104,9 +106,9 @@ def main():
         writer = csv.writer(file)
         writer.writerow(['URL', 'Response Code', 'Exception', 'Details', 'Response Length'])
 
-    response_code, exception, details, response_length, sitemap_content = get_url(sitemap_url, request_timeout)
-    if sitemap_content:
-        urls = parse_sitemap(sitemap_content)
+    sitemap_response, exception, details = get_url(sitemap_url, request_timeout)
+    if sitemap_response:
+        urls = parse_sitemap(sitemap_response.text)
         for url in urls:
             validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, request_timeout)
 

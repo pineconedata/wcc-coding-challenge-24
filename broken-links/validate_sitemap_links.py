@@ -3,10 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def write_data(data_file, url, response_code, exception, details, response_length):
+def write_data(data_file, url, response_code, exception, details, response_length, page_title):
     with open(data_file, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([url, response_code, exception, details, response_length])
+        writer.writerow([url, response_code, exception, details, response_length, page_title])
 
 
 def get_url(url, timeout=10):
@@ -58,6 +58,16 @@ def contains_excluded_phrases(response_content, phrases_to_exclude):
     return False
 
 
+def extract_page_title(response_content):
+    try:
+        soup = BeautifulSoup(response_content, 'html.parser')
+        title_tag = soup.find('title')
+        return title_tag.text if title_tag else None
+    except Exception as e:
+        print(f'Error: Failed to extract page title. Details: {e}')
+        return None
+
+
 def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
     # set initial values
     data = {
@@ -65,7 +75,8 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
         'response_code': None,
         'exception': None,
         'details': None,
-        'response_length': 0
+        'response_length': 0,
+        'page_title': None
     }
 
     # if url is excluded, log and return early
@@ -73,7 +84,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
         data['exception'] = 'Excluded URL'
         data['details'] = 'URL in excluded list'
         write_data(data_file, data['url'], data['response_code'], data['exception'],
-                   data['details'], data['response_length'])
+                   data['details'], data['response_length'], data['page_title'])
         return
 
     # get url and update log data
@@ -85,6 +96,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
     if response is not None:
         data['response_code'] = response.status_code
         data['response_length'] = len(response.text) if response.text else 0
+        data['page_title'] = extract_page_title(response.text)
 
         # check response content for excluded phrases
         excluded_phrase = contains_excluded_phrases(response.text, phrases_to_exclude)
@@ -92,7 +104,8 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
             data['exception'] = 'Excluded Phrase'
             data['details'] = f'Response content contains an excluded phrase: "{excluded_phrase}".'
 
-    write_data(data_file, data['url'], data['response_code'], data['exception'], data['details'], data['response_length'])
+    write_data(data_file, data['url'], data['response_code'], data['exception'],
+               data['details'], data['response_length'], data['page_title'])
 
 
 def main():
@@ -104,7 +117,8 @@ def main():
 
     with open(data_file, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['URL', 'Response Code', 'Exception', 'Details', 'Response Length'])
+        writer.writerow(['URL', 'Response Code', 'Exception', 'Details', 'Response Length',
+                        'Page Title'])
 
     sitemap_response, exception, details = get_url(sitemap_url, request_timeout)
     if sitemap_response:

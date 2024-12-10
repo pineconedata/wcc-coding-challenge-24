@@ -1,3 +1,4 @@
+import re
 import csv
 import requests
 from bs4 import BeautifulSoup
@@ -50,18 +51,17 @@ def is_url_excluded(url, urls_to_exclude):
     return False
 
 
-def contains_excluded_phrases(response_content, phrases_to_exclude):
+def contains_excluded_phrases(content, phrases_to_exclude):
     for phrase in phrases_to_exclude:
-        if phrase.lower() in response_content.lower():
+        if re.search(phrase, content.get_text(), re.IGNORECASE):
             print(f'Excluded phrase "{phrase}" found in page.')
             return phrase
     return False
 
 
-def extract_page_title(response_content):
+def extract_page_title(content):
     try:
-        soup = BeautifulSoup(response_content, 'html.parser')
-        title_tag = soup.find('title')
+        title_tag = content.find('title')
         return title_tag.text if title_tag else None
     except Exception as e:
         print(f'Error: Failed to extract page title. Details: {e}')
@@ -94,12 +94,14 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
 
     # add response details to output
     if response is not None:
+        response_content = BeautifulSoup(response.text, 'html.parser')
+
         data['response_code'] = response.status_code
         data['response_length'] = len(response.text) if response.text else 0
-        data['page_title'] = extract_page_title(response.text)
+        data['page_title'] = extract_page_title(response_content)
 
         # check response content for excluded phrases
-        excluded_phrase = contains_excluded_phrases(response.text, phrases_to_exclude)
+        excluded_phrase = contains_excluded_phrases(response_content.body, phrases_to_exclude)
         if excluded_phrase:
             data['exception'] = 'Excluded Phrase'
             data['details'] = f'Response content contains an excluded phrase: "{excluded_phrase}".'
@@ -111,7 +113,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
 def main():
     sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
     urls_to_exclude = ['https://www.pineconedata.com/404', 'https://www.pineconedata.com/404.html']
-    phrases_to_exclude = ['this page doesn\'t exist', 'it is broken']
+    phrases_to_exclude = ["this page doesn't exist", 'it is broken']
     request_timeout = 10
     data_file = 'sitemap_link_validation.csv'
 

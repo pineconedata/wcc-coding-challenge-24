@@ -52,10 +52,12 @@ def is_url_excluded(url, urls_to_exclude):
 
 
 def contains_excluded_phrases(content, phrases_to_exclude):
-    for phrase in phrases_to_exclude:
-        if re.search(phrase, content.get_text(), re.IGNORECASE):
-            print(f'Excluded phrase "{phrase}" found in page.')
-            return phrase
+    matched_phrases = [phrase for phrase in phrases_to_exclude
+                       if re.search(phrase, content.get_text(), re.IGNORECASE)]
+
+    if matched_phrases:
+        print(f'Excluded phrase(s) "{matched_phrases}" found in page.')
+        return matched_phrases
     return False
 
 
@@ -101,10 +103,10 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
         data['page_title'] = extract_page_title(response_content)
 
         # check response content for excluded phrases
-        excluded_phrase = contains_excluded_phrases(response_content.body, phrases_to_exclude)
-        if excluded_phrase:
+        excluded_match = contains_excluded_phrases(response_content.body, phrases_to_exclude)
+        if excluded_match:
             data['exception'] = 'Excluded Phrase'
-            data['details'] = f'Response content contains an excluded phrase: "{excluded_phrase}".'
+            data['details'] = f'Response content contains excluded phrase(s): "{excluded_match}".'
 
     write_data(data_file, data['url'], data['response_code'], data['exception'],
                data['details'], data['response_length'], data['page_title'])
@@ -113,7 +115,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
 def main():
     sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
     urls_to_exclude = ['https://www.pineconedata.com/404', 'https://www.pineconedata.com/404.html']
-    phrases_to_exclude = ["this page doesn't exist", 'it is broken']
+    phrases_to_exclude = ["this page doesn't exist", 'link to it is broken']
     request_timeout = 10
     data_file = 'sitemap_link_validation.csv'
 

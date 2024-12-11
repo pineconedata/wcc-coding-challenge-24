@@ -1,16 +1,16 @@
-URL,Response Code,Exception,Details,Response Length,Page Title
-https://www.pineconedata.com/2024-09-13-basketbal-train-ols/,200,,,140754,Training a Linear Regression Model: Outlier or Caitlin Clark? [Part 5]
-https://www.pineconedata.com/2024-07-29-basketball-visualizations/,200,,,104913,Data Visualizations and Feature Selection: Outlier or Caitlin Clark? [Part 4]
-https://www.pineconedata.com/2024-05-30-basketball-feature_engineering/,200,,,55969,Feature Engineering: Outlier or Caitlin Clark? [Part 3]
-https://www.pineconedata.com/2024-05-02-basketball-data-cleaning-preprocessing/,200,,,90245,Data Cleaning and Preprocessing: Outlier or Caitlin Clark? [Part 2]
-https://www.pineconedata.com/2024-04-11-basketball-data-acquisition/,200,,,83683,Project Setup and Data Acquisition: Outlier or Caitlin Clark? [Part 1]
-https://www.pineconedata.com/2023-11-14-install-jupyterlab/,200,,,65754,Jump into Data Science with JupyterLab: A Comprehensive Guide for Debian Linux
-https://www.pineconedata.com/2023-11-07-automated-feed-generator/,200,,,63147,Automate Your News Feed: How Web Scraping Powers a Python-Generated RSS Feed
-https://www.pineconedata.com/2023-10-24-site-launch/,200,,,16335,Website Launch
-https://www.pineconedata.com/404.html,,Excluded URL,URL in excluded list,0,
-https://www.pineconedata.com/about/,200,,,15271,About
-https://www.pineconedata.com/,200,,,26839,Home | Pinecone Data Website
-https://www.pineconedata.com/privacy-policy/,200,,,29289,Privacy Policy
-https://www.pineconedata.com/tags/,200,,,30342,Posts by Topic
-https://www.pineconedata.com/workwithme/,200,,,13465,Contact Me
-https://www.pineconedata.com/page2/,200,,,19859,Home | Pinecone Data Website
+URL,Response Code,Exception,Details,Response Length,Page Title,First Party
+https://www.pineconedata.com/2024-09-13-basketbal-train-ols/,200,,,140754,Training a Linear Regression Model: Outlier or Caitlin Clark? [Part 5],True
+https://www.pineconedata.com/2024-07-29-basketball-visualizations/,200,,,104913,Data Visualizations and Feature Selection: Outlier or Caitlin Clark? [Part 4],True
+https://www.pineconedata.com/2024-05-30-basketball-feature_engineering/,200,,,55969,Feature Engineering: Outlier or Caitlin Clark? [Part 3],True
+https://www.pineconedata.com/2024-05-02-basketball-data-cleaning-preprocessing/,200,,,90245,Data Cleaning and Preprocessing: Outlier or Caitlin Clark? [Part 2],True
+https://www.pineconedata.com/2024-04-11-basketball-data-acquisition/,200,,,83683,Project Setup and Data Acquisition: Outlier or Caitlin Clark? [Part 1],True
+https://www.pineconedata.com/2023-11-14-install-jupyterlab/,200,,,65754,Jump into Data Science with JupyterLab: A Comprehensive Guide for Debian Linux,True
+https://www.pineconedata.com/2023-11-07-automated-feed-generator/,200,,,63147,Automate Your News Feed: How Web Scraping Powers a Python-Generated RSS Feed,True
+https://www.pineconedata.com/2023-10-24-site-launch/,200,,,16335,Website Launch,True
+https://www.pineconedata.com/404.html,,Excluded URL,URL in excluded list,0,,True
+https://www.pineconedata.com/about/,200,,,15271,About,True
+https://www.pineconedata.com/,200,,,26839,Home | Pinecone Data Website,True
+https://www.pineconedata.com/privacy-policy/,200,,,29289,Privacy Policy,True
+https://www.pineconedata.com/tags/,200,,,30342,Posts by Topic,True
+https://www.pineconedata.com/workwithme/,200,,,13465,Contact Me,True
+https://www.pineconedata.com/page2/,200,,,19859,Home | Pinecone Data Website,True

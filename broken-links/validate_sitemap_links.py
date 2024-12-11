@@ -2,12 +2,13 @@ import re
 import csv
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse 
 
 
-def write_data(data_file, url, response_code, exception, details, response_length, page_title):
+def write_data(data_file, url, response_code, exception, details, response_length, page_title, url_type):
     with open(data_file, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([url, response_code, exception, details, response_length, page_title])
+        writer.writerow([url, response_code, exception, details, response_length, page_title, url_type])
 
 
 def get_url(url, timeout=10):
@@ -44,6 +45,18 @@ def parse_sitemap(sitemap_content):
         return []
 
 
+def extract_domain(url):
+    """Extract the domain from the given URL."""
+    parsed_url = urlparse(url)
+    return parsed_url.netloc
+
+
+def is_url_first_party(url, first_party_domains):
+    """Determine if the URL is first-party (True) or third-party (False) based on first_party_domains list."""
+    domain = extract_domain(url)
+    return domain in first_party_domains
+
+
 def is_url_excluded(url, urls_to_exclude):
     if url in urls_to_exclude:
         print(f'Skipping {url} as it is in the excluded list.')
@@ -70,7 +83,7 @@ def extract_page_title(content):
         return None
 
 
-def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
+def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, data_file, timeout):
     # set initial values
     data = {
         'url': url,
@@ -78,15 +91,20 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
         'exception': None,
         'details': None,
         'response_length': 0,
-        'page_title': None
+        'page_title': None,
+        'url_first_party': None
     }
+
+    # determine if the URL is first-party or third-party
+    data['url_first_party'] = is_url_first_party(url, first_party_domains)
 
     # if url is excluded, log and return early
     if is_url_excluded(url, urls_to_exclude):
         data['exception'] = 'Excluded URL'
         data['details'] = 'URL in excluded list'
         write_data(data_file, data['url'], data['response_code'], data['exception'],
-                   data['details'], data['response_length'], data['page_title'])
+                   data['details'], data['response_length'], data['page_title'],
+                   data['url_first_party'])
         return
 
     # get url and update log data
@@ -109,26 +127,29 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, timeout):
             data['details'] = f'Response content contains excluded phrase(s): "{excluded_match}".'
 
     write_data(data_file, data['url'], data['response_code'], data['exception'],
-               data['details'], data['response_length'], data['page_title'])
+               data['details'], data['response_length'], data['page_title'], data['url_first_party'])
 
 
 def main():
     sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
     urls_to_exclude = ['https://www.pineconedata.com/404', 'https://www.pineconedata.com/404.html']
     phrases_to_exclude = ["this page doesn't exist", 'link to it is broken']
+    first_party_domains = ['www.pineconedata.com']
     request_timeout = 10
     data_file = 'sitemap_link_validation.csv'
+
+    first_party_domains = first_party_domains or [extract_domain(sitemap_url)]
 
     with open(data_file, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['URL', 'Response Code', 'Exception', 'Details', 'Response Length',
-                        'Page Title'])
+                        'Page Title', 'First Party'])
 
     sitemap_response, exception, details = get_url(sitemap_url, request_timeout)
     if sitemap_response:
         urls = parse_sitemap(sitemap_response.text)
         for url in urls:
-            validate_url(url, urls_to_exclude, phrases_to_exclude, data_file, request_timeout)
+            validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, data_file, request_timeout)
 
 
 if __name__ == '__main__':

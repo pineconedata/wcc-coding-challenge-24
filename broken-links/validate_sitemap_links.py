@@ -10,18 +10,21 @@ from urllib.parse import urlparse
 
 def write_data(data_file, url, response_code, exception, details, response_length,
                page_title, url_type):
+    """Write the results to the CSV file."""
     with open(data_file, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([url, response_code, exception, details, response_length,
                          page_title, url_type])
 
 
-def load_config(config_file): 
+def load_config(config_file):
+    """Load the configuration details from a JSON file."""
     with open(config_file, 'r') as f:
         return json.load(f)
 
 
 def get_url(url, timeout=10):
+    """Send a GET request to the URL with the specified timeout."""
     try:
         print(f'Retrieving page from {url}')
         response = requests.get(url, timeout=timeout)
@@ -42,6 +45,7 @@ def get_url(url, timeout=10):
 
 
 def parse_sitemap(sitemap_content):
+    """Parse the sitemap XML content and return a list of URLs."""
     try:
         print('Parsing sitemap content.')
         soup = BeautifulSoup(sitemap_content, 'xml')
@@ -69,6 +73,7 @@ def is_url_first_party(url, first_party_domains):
 
 
 def is_url_excluded(url, urls_to_exclude):
+    """Check if the URL is in the exclusion list."""
     if url in urls_to_exclude:
         print(f'Skipping {url} as it is in the excluded list.')
         return True
@@ -76,6 +81,7 @@ def is_url_excluded(url, urls_to_exclude):
 
 
 def contains_excluded_phrases(content, phrases_to_exclude):
+    """Check if the content contains any of the excluded phrases."""
     matched_phrases = [phrase for phrase in phrases_to_exclude
                        if re.search(phrase, content.get_text(), re.IGNORECASE)]
 
@@ -86,6 +92,7 @@ def contains_excluded_phrases(content, phrases_to_exclude):
 
 
 def extract_page_title(content):
+    """Extract the page title from the HTML content."""
     try:
         title_tag = content.find('title')
         return title_tag.text if title_tag else None
@@ -95,7 +102,7 @@ def extract_page_title(content):
 
 
 def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, data_file, timeout):
-    # set initial values
+    """Validate the URL by checking its status, title, and content for exclusions."""
     data = {
         'url': url,
         'response_code': None,
@@ -142,24 +149,26 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
 
 
 def main():
+    """Main entry point for the script."""
     parser = argparse.ArgumentParser(description="Validate URLs from a sitemap.")
     parser.add_argument('--config', default='config.json', help='Path to the configuration file.')
     parser.add_argument('--sitemap_url', help="URL of the sitemap to validate.")
     args = parser.parse_args()
     config = load_config(args.config)
 
-    # get parameters or set default values
     sitemap_url = args.sitemap_url or config.get('sitemap_url')
     if not sitemap_url:
         print("Error: 'sitemap_url' is required but not provided, either \
               in the configuration file or via the command line.")
         sys.exit(1)
+
     urls_to_exclude = config.get('urls_to_exclude', [])
     phrases_to_exclude = config.get('phrases_to_exclude', [])
     first_party_domains = config.get('first_party_domains', [extract_domain(sitemap_url)])
     request_timeout = config.get('timeout', 10)
     data_file = config.get('data_file_name', 'sitemap_link_validation.csv')
 
+    # initialize CSV file with headers
     with open(data_file, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['URL', 'Response Code', 'Exception', 'Details', 'Response Length',

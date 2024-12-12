@@ -9,12 +9,12 @@ from urllib.parse import urlparse
 
 
 def write_data(data_file, url, response_code, exception, details, response_length,
-               page_title, url_type):
+               page_title, url_first_party):
     """Write the results to the CSV file."""
     with open(data_file, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([url, response_code, exception, details, response_length,
-                         page_title, url_type])
+                         page_title, url_first_party])
 
 
 def load_config(config_file):
@@ -120,9 +120,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
     if is_url_excluded(url, urls_to_exclude):
         data['exception'] = 'Excluded URL'
         data['details'] = 'URL in excluded list'
-        write_data(data_file, data['url'], data['response_code'], data['exception'],
-                   data['details'], data['response_length'], data['page_title'],
-                   data['url_first_party'])
+        write_data(data_file, **data)
         return
 
     # get url and update log data
@@ -144,8 +142,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
             data['exception'] = 'Excluded Phrase'
             data['details'] = f'Response content contains excluded phrase(s): "{excluded_match}".'
 
-    write_data(data_file, data['url'], data['response_code'], data['exception'],
-               data['details'], data['response_length'], data['page_title'], data['url_first_party'])
+    write_data(data_file, **data)
 
 
 def main():

@@ -1,14 +1,24 @@
 import re
 import csv
+import sys
+import json
 import requests
+import argparse
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse 
+from urllib.parse import urlparse
 
 
-def write_data(data_file, url, response_code, exception, details, response_length, page_title, url_type):
+def write_data(data_file, url, response_code, exception, details, response_length,
+               page_title, url_type):
     with open(data_file, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([url, response_code, exception, details, response_length, page_title, url_type])
+        writer.writerow([url, response_code, exception, details, response_length,
+                         page_title, url_type])
+
+
+def load_config(config_file): 
+    with open(config_file, 'r') as f:
+        return json.load(f)
 
 
 def get_url(url, timeout=10):
@@ -52,7 +62,8 @@ def extract_domain(url):
 
 
 def is_url_first_party(url, first_party_domains):
-    """Determine if the URL is first-party (True) or third-party (False) based on first_party_domains list."""
+    """Determine if the URL is first-party (True) or third-party (False)
+    based on first_party_domains list."""
     domain = extract_domain(url)
     return domain in first_party_domains
 
@@ -131,14 +142,23 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
 
 
 def main():
-    sitemap_url = 'https://www.pineconedata.com/sitemap.xml'
-    urls_to_exclude = ['https://www.pineconedata.com/404', 'https://www.pineconedata.com/404.html']
-    phrases_to_exclude = ["this page doesn't exist", 'link to it is broken']
-    first_party_domains = ['www.pineconedata.com']
-    request_timeout = 10
-    data_file = 'sitemap_link_validation.csv'
+    parser = argparse.ArgumentParser(description="Validate URLs from a sitemap.")
+    parser.add_argument('--config', default='config.json', help='Path to the configuration file.')
+    parser.add_argument('--sitemap_url', help="URL of the sitemap to validate.")
+    args = parser.parse_args()
+    config = load_config(args.config)
 
-    first_party_domains = first_party_domains or [extract_domain(sitemap_url)]
+    # get parameters or set default values
+    sitemap_url = args.sitemap_url or config.get('sitemap_url')
+    if not sitemap_url:
+        print("Error: 'sitemap_url' is required but not provided, either \
+              in the configuration file or via the command line.")
+        sys.exit(1)
+    urls_to_exclude = config.get('urls_to_exclude', [])
+    phrases_to_exclude = config.get('phrases_to_exclude', [])
+    first_party_domains = config.get('first_party_domains', [extract_domain(sitemap_url)])
+    request_timeout = config.get('timeout', 10)
+    data_file = config.get('data_file_name', 'sitemap_link_validation.csv')
 
     with open(data_file, mode='w', newline='') as file:
         writer = csv.writer(file)
@@ -149,7 +169,8 @@ def main():
     if sitemap_response:
         urls = parse_sitemap(sitemap_response.text)
         for url in urls:
-            validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, data_file, request_timeout)
+            validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
+                         data_file, request_timeout)
 
 
 if __name__ == '__main__':

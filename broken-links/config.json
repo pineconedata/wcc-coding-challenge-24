@@ -1,6 +1,6 @@
 {
   "sitemap_url": "https://www.pineconedata.com/sitemap.xml",
-  "urls_to_exclude": ["'https://www.pineconedata.com/404", "https://www.pineconedata.com/404.html"],
+  "urls_to_exclude": ["^https://www.pineconedata.com/404"],
   "phrases_to_exclude": ["this page doesn't exist", "link to it is broken"],
   "first_party_domains": ["www.pineconedata.com"],
   "timeout": 10

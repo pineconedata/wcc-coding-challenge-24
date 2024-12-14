@@ -74,8 +74,10 @@ def is_url_first_party(url, first_party_domains):
 
 def is_url_excluded(url, urls_to_exclude):
     """Check if the URL is in the exclusion list."""
-    if url in urls_to_exclude:
-        print(f'Skipping {url} as it is in the excluded list.')
+    exclude_patterns = [re.compile(pattern) for pattern in urls_to_exclude]
+    matched_url = [pattern.search(url) for pattern in exclude_patterns if pattern.search(url)]
+    if matched_url:
+        print(f'Skipping {url} as it matches the pattern(s) {matched_url} in the excluded list.')
         return True
     return False
 

@@ -48,6 +48,7 @@ def parse_sitemap(sitemap_content):
     """Parse the sitemap XML content and return a list of URLs."""
     try:
         print('Parsing sitemap content.')
+        sitemap_content = sitemap_content.text
         soup = BeautifulSoup(sitemap_content, 'xml')
         urls = [loc.text for loc in soup.find_all('loc')]
         print(f'Parsed sitemap content. Found {len(urls)} URLs.')
@@ -61,36 +62,53 @@ def parse_sitemap(sitemap_content):
 
 def extract_domain(url):
     """Extract the domain from the given URL."""
-    parsed_url = urlparse(url)
-    return parsed_url.netloc
+    try: 
+        parsed_url = urlparse(url)
+        return parsed_url.netloc
+    except Exception as e:
+        print(f'Error: Failed extract domain from the URL. Details: {e}')
+        return url
 
 
 def is_url_first_party(url, first_party_domains):
     """Determine if the URL is first-party (True) or third-party (False)
     based on first_party_domains list."""
-    domain = extract_domain(url)
-    return domain in first_party_domains
+    try:
+        domain = extract_domain(url)
+        return domain in first_party_domains
+    except Exception as e:
+        print(f'Error: Failed to check if url is in the excluded list. Details: {e}')
+        return None
 
 
 def is_url_excluded(url, urls_to_exclude):
     """Check if the URL is in the exclusion list."""
-    exclude_patterns = [re.compile(pattern) for pattern in urls_to_exclude]
-    matched_url = [pattern.search(url) for pattern in exclude_patterns if pattern.search(url)]
-    if matched_url:
-        print(f'Skipping {url} as it matches the pattern(s) {matched_url} in the excluded list.')
-        return True
-    return False
+    try:
+        exclude_patterns = [re.compile(pattern) for pattern in urls_to_exclude]
+        matched_url = [pattern.search(url) for pattern in exclude_patterns if pattern.search(url)]
+        if matched_url:
+            print(f'Skipping {url} as it matches the pattern(s) {matched_url} in the excluded list.')
+            return True
+        return False
+    except Exception as e:
+        print(f'Error: Failed to check if url is in the excluded list. Details: {e}')
+        return None
 
 
 def contains_excluded_phrases(content, phrases_to_exclude):
     """Check if the content contains any of the excluded phrases."""
-    matched_phrases = [phrase for phrase in phrases_to_exclude
-                       if re.search(phrase, content.get_text(), re.IGNORECASE)]
+    try:
+        content = content.body
+        matched_phrases = [phrase for phrase in phrases_to_exclude
+                           if re.search(phrase, content.get_text(), re.IGNORECASE)]
 
-    if matched_phrases:
-        print(f'Excluded phrase(s) "{matched_phrases}" found in page.')
-        return matched_phrases
-    return False
+        if matched_phrases:
+            print(f'Excluded phrase(s) "{matched_phrases}" found in page.')
+            return matched_phrases
+        return False
+    except Exception as e:
+        print(f'Error: Failed to check if content contains excluded phrases. Details: {e}')
+        return None
 
 
 def extract_page_title(content):
@@ -131,7 +149,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
     data['details'] = details
 
     # add response details to output
-    if response is not None:
+    if response is not None and response.text:
         response_content = BeautifulSoup(response.text, 'html.parser')
 
         data['response_code'] = response.status_code
@@ -139,7 +157,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
         data['page_title'] = extract_page_title(response_content)
 
         # check response content for excluded phrases
-        excluded_match = contains_excluded_phrases(response_content.body, phrases_to_exclude)
+        excluded_match = contains_excluded_phrases(response_content, phrases_to_exclude)
         if excluded_match:
             data['exception'] = 'Excluded Phrase'
             data['details'] = f'Response content contains excluded phrase(s): "{excluded_match}".'
@@ -175,7 +193,7 @@ def main():
 
     sitemap_response, exception, details = get_url(sitemap_url, request_timeout)
     if sitemap_response:
-        urls = parse_sitemap(sitemap_response.text)
+        urls = parse_sitemap(sitemap_response)
         for url in urls:
             validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
                          data_file, request_timeout)

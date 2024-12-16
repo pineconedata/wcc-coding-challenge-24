@@ -7,10 +7,200 @@ https://www.pineconedata.com/2024-04-11-basketball-data-acquisition/,200,,,83683
 https://www.pineconedata.com/2023-11-14-install-jupyterlab/,200,,,65754,Jump into Data Science with JupyterLab: A Comprehensive Guide for Debian Linux,True
 https://www.pineconedata.com/2023-11-07-automated-feed-generator/,200,,,63147,Automate Your News Feed: How Web Scraping Powers a Python-Generated RSS Feed,True
 https://www.pineconedata.com/2023-10-24-site-launch/,200,,,16335,Website Launch,True
-https://www.pineconedata.com/404.html,,Excluded URL,URL in excluded list,0,,True
+https://www.pineconedata.com/404.html,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,True
 https://www.pineconedata.com/about/,200,,,15271,About,True
 https://www.pineconedata.com/,200,,,26839,Home | Pinecone Data Website,True
 https://www.pineconedata.com/privacy-policy/,200,,,29289,Privacy Policy,True
 https://www.pineconedata.com/tags/,200,,,30342,Posts by Topic,True
 https://www.pineconedata.com/workwithme/,200,,,13465,Contact Me,True
 https://www.pineconedata.com/page2/,200,,,19859,Home | Pinecone Data Website,True
+https://developer.mozilla.org/en-US/docs/Web/JavaScript,200,,,162780,JavaScript | MDN,False
+https://www.pineconedata.com/tags#scikit-learn,200,,,30342,Posts by Topic,True
+https://pypi.org/project/pandas/,200,,,327767,pandas · PyPI,False
+https://en.wikipedia.org/wiki/Local_regression,200,,,161404,Local regression - Wikipedia,False
+https://www.selenium.dev/,200,,,28562,Selenium,False
+https://pypi.org/project/feedgen/,200,,,60474,feedgen · PyPI,False
+https://en.wikipedia.org/wiki/Division_by_zero,200,,,297523,Division by zero - Wikipedia,False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.shape.html,200,,,53891,pandas.DataFrame.shape — pandas 2.2.3 documentation,False
+https://www.pineconedata.com/tags#Python,200,,,30342,Posts by Topic,True
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2023-11-14-install-jupyterlab%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://crontab.guru,200,,,13862,Crontab.guru - The cron schedule expression generator,False
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2023-10-24-site-launch%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://en.wikipedia.org/wiki/Integrated_development_environment,200,,,208001,Integrated development environment - Wikipedia,False
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.size.html,200,,,53679,pandas.DataFrame.size — pandas 2.2.3 documentation,False
+https://pip.pypa.io/en/stable/installation/,200,,,41159,Installation - pip documentation v24.3.1,False
+https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector,200,,,116274,Document: querySelector() method - Web APIs | MDN,False
+https://www.pineconedata.com/2024-07-29-basketball-visualizations/#generate-correlation-matrix,200,,,104913,Data Visualizations and Feature Selection: Outlier or Caitlin Clark? [Part 4],True
+https://en.wikipedia.org/wiki/Lasso_(statistics),200,,,494328,Lasso (statistics) - Wikipedia,False
+https://pages.github.com/,200,,,14353,"GitHub Pages | Websites for you and your projects, hosted directly from your GitHub repository. Just edit, push, and your changes are live.",False
+https://www.python.org,200,,,51144,Welcome to Python.org,False
+https://stackoverflow.com/questions/64299457/jupyter-password-not-hashed,200,,,173392,nvidia jetson nano - Jupyter Password Not Hashed - Stack Overflow,False
+https://www.pineconedata.com/tags#web scraping,200,,,30342,Posts by Topic,True
+https://seaborn.pydata.org/,200,,,18694,seaborn: statistical data visualization — seaborn 0.13.2 documentation,False
+https://www.espn.com/womens-college-basketball/player/_/id/4900609/ally-becki,403,HTTPError,HTTPError 403 - Forbidden,919,ERROR: The request could not be satisfied,False
+https://w3.physics.arizona.edu/,200,,,60445,Home | UA Science | Physics,False
+https://www.postman.com/,200,,,663983,Postman: The World's Leading API Platform | Sign Up for Free,False
+https://web.dev/articles/when-to-use-local-https,200,,,85288,When to use HTTPS for local development  |  Articles  |  web.dev,False
+https://en.wikipedia.org/wiki/NCAA_Division_I_women%27s_basketball_conference_tournaments,200,,,63979,NCAA Division I women's basketball conference tournaments - Wikipedia,False
+https://www.python.org/,200,,,51144,Welcome to Python.org,False
+https://twitter.com/intent/tweet?text=Data+Cleaning+and+Preprocessing&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-05-02-basketball-data-cleaning-preprocessing%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2024-05-30-basketball-feature_engineering%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2023-11-07-automated-feed-generator%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://numpy.org/doc/,200,,,8402,NumPy Documentation,False
+https://pypi.org/project/pip/,200,,,171161,pip · PyPI,False
+https://docs.scipy.org/doc//scipy-1.10.1/reference/generated/scipy.stats.linregress.html,200,,,36092,scipy.stats.linregress — SciPy v1.10.1 Manual,False
+https://jupyter.org/,200,,,28597,Project Jupyter | Home,False
+https://github.com/pineconedata/automated-feed-generator,200,,,316916,"GitHub - pineconedata/automated-feed-generator: Scrapes a webpage that does not have an RSS feed, generates an RSS feed, and saves that RSS feed to an XML file.",False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.isna.html,200,,,57706,pandas.DataFrame.isna — pandas 2.2.3 documentation,False
+https://statisticsbyjim.com/regression/ols-linear-regression-assumptions/,403,HTTPError,HTTPError 403 - Forbidden,5459,Attention Required! | Cloudflare,False
+https://plotly.com/,200,,,379651,Data Apps for Production | Plotly,False
+https://www.pineconedata.com/tags#machine learning,200,,,30342,Posts by Topic,True
+https://en.wikipedia.org/wiki/Correlation_does_not_imply_causation,200,,,175407,Correlation does not imply causation - Wikipedia,False
+https://scikit-learn.org/stable/machine_learning_map.html,200,,,237488,12. Choosing the right estimator — scikit-learn 1.6.0 documentation,False
+https://scipy.org/https://scipy.org/,404,HTTPError,HTTPError 404 - Not Found,3437,Page not found,False
+https://www.pineconedata.com/tags#data science,200,,,30342,Posts by Topic,True
+https://www.openssl.org/docs/man1.0.2/man1/openssl-req.html,200,,,170,,False
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2024-07-29-basketball-visualizations%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.instagram.com/pinecone.data,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://ams.arizona.edu/,200,,,25651,Homepage | AMS,False
+https://jupyterlab.readthedocs.io/en/stable/getting_started/overview.html,200,,,39409,Get Started — JupyterLab 4.3.3 documentation,False
+https://scikit-learn.org/stable/index.html,200,,,33261,scikit-learn: machine learning in Python — scikit-learn 1.6.0 documentation,False
+https://www.pineconedata.com/tags#Selenium,200,,,30342,Posts by Topic,True
+https://jupyterlab.readthedocs.io/en/stable/getting_started/starting.html,200,,,22254,Starting JupyterLab — JupyterLab 4.3.3 documentation,False
+https://www.nano-editor.org/dist/v2.2/nano.html,200,,,39901,nano Command Manual,False
+https://www.pineconedata.com/tags#RSS,200,,,30342,Posts by Topic,True
+https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll,200,,,119114,Document: querySelectorAll() method - Web APIs | MDN,False
+https://twitter.com/intent/tweet?text=Website+Launch&url=https%3A%2F%2Fwww.pineconedata.com%2F2023-10-24-site-launch%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://en.wikipedia.org/wiki/Feature_selection,200,,,345495,Feature selection - Wikipedia,False
+https://jekyllrb.com/,200,,,10460,"Jekyll • Simple, blog-aware, static sites | Transform your plain text into static websites and blogs",False
+https://man7.org/linux/man-pages/man5/crontab.5.html,200,,,23706,crontab(5) - Linux manual page,False
+https://pandas.pydata.org/docs/,200,,,24647,pandas documentation — pandas 2.2.3 documentation,False
+https://www.pineconedata.com/tags#Jupyter,200,,,30342,Posts by Topic,True
+https://twitter.com/intent/tweet?text=Feature+Engineering&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-05-30-basketball-feature_engineering%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://sports.yahoo.com/ncaaw/stats/individual/?selectedTable=0&leagueStructure=ncaaw.struct.div.1&sortStatId=FREE_THROWS_MADE,200,,,1824309,NCAAW College Women's Basketball  Leaders & Player Stats - Yahoo Sports,False
+https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html,200,,,38116,Installation — JupyterLab 4.3.3 documentation,False
+https://twitter.com/intent/tweet?text=Training+a+Linear+Regression+Model&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-09-13-basketbal-train-ols%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.groupby.html,200,,,74215,pandas.DataFrame.groupby — pandas 2.2.3 documentation,False
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2023-10-24-site-launch%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-09-13-basketbal-train-ols%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_,200,,,20211,Adobe Flash Player End of Life,False
+https://en.wikipedia.org/wiki/Correlation#Correlation_matrices,200,,,386056,Correlation - Wikipedia,False
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe,200,,,169824,<iframe>: The Inline Frame element - HTML: HyperText Markup Language | MDN,False
+https://ubuntu.com/,200,,,121136,"
+
+      Enterprise Open Source and Linux
+    | Ubuntu",False
+https://www.pineconedata.com/tags#automation,200,,,30342,Posts by Topic,True
+https://pop.system76.com/,200,,,5182,Pop!_OS by System76,False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html,200,,,49369,pandas.DataFrame.to_csv — pandas 2.2.3 documentation,False
+https://www.pineconedata.com/workwithme/#contact-me,200,,,13465,Contact Me,True
+https://en.wikipedia.org/wiki/Linear_regression#Formulation,200,,,550508,Linear regression - Wikipedia,False
+https://wiki.python.org/moin/BeginnersGuide,200,,,26771,BeginnersGuide - Python Wiki,False
+https://en.wikipedia.org/wiki/Ridge_regression,200,,,307856,Ridge regression - Wikipedia,False
+https://pandas.pydata.org/docs/reference/api/pandas.to_numeric.html,200,,,38675,pandas.to_numeric — pandas 2.2.3 documentation,False
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-07-29-basketball-visualizations%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://pypi.org/project/selenium/,200,,,236832,selenium · PyPI,False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.corr.html,200,,,59234,pandas.DataFrame.corr — pandas 2.2.3 documentation,False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html,200,,,69013,pandas.DataFrame.plot — pandas 2.2.3 documentation,False
+https://www.pineconedata.com,200,,,26839,Home | Pinecone Data Website,True
+https://openpyxl.readthedocs.io/en/stable/,200,,,17186,openpyxl - A Python library to read/write Excel 2010 xlsx/xlsm files — openpyxl 3.1.3 documentation,False
+https://linkedin.com/in/emilyrcreager,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM,200,,,104452,Using shadow DOM - Web APIs | MDN,False
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2024-05-02-basketball-data-cleaning-preprocessing%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://ubuntu.com/tutorials/command-line-for-beginners#1-overview,200,,,121164,"
+
+      The Linux command line for beginners
+    | Ubuntu",False
+https://seaborn.pydata.org/generated/seaborn.regplot.html,200,,,67231,seaborn.regplot — seaborn 0.13.2 documentation,False
+https://scikit-learn.org/1.4/modules/generated/sklearn.linear_model.LinearRegression.html,200,,,63312,sklearn.linear_model.LinearRegression — scikit-learn 1.4.2 documentation,False
+https://jupyterlab.readthedocs.io/en/stable/user/notebook.html#notebook,200,,,30842,Notebooks — JupyterLab 4.3.3 documentation,False
+https://seaborn.pydata.org/generated/seaborn.pairplot.html,200,,,55642,seaborn.pairplot — seaborn 0.13.2 documentation,False
+https://github.com/pineconedata/automated-feed-generator/blob/main/requirements.txt,200,,,354586,automated-feed-generator/requirements.txt at main · pineconedata/automated-feed-generator · GitHub,False
+https://en.wikipedia.org/wiki/Basketball_positions,200,,,136391,Basketball positions - Wikipedia,False
+https://stackoverflow.com/questions/34649969/how-to-find-the-features-names-of-the-coefficients-using-scikit-linear-regressio,200,,,292582,python - How to find the features names of the coefficients using scikit linear regression? - Stack Overflow,False
+https://en.wikipedia.org/wiki/Interquartile_range,200,,,151889,Interquartile range - Wikipedia,False
+https://en.wikipedia.org/wiki/Regular_expressionhttps://en.wikipedia.org/wiki/Regular_expression,404,HTTPError,HTTPError 404 - Not Found,46721,Regular expressionhttps://en.wikipedia.org/wiki/Regular expression - Wikipedia,False
+https://seaborn.pydata.org/tutorial/categorical.html#boxplots,200,,,62555,Visualizing categorical data — seaborn 0.13.2 documentation,False
+https://seaborn.pydata.org/generated/seaborn.histplot.htmlhttps://seaborn.pydata.org/generated/seaborn.histplot.html,404,HTTPError,HTTPError 404 - Not Found,9379,Page not found · GitHub Pages,False
+https://www.python.org/downloads/,200,,,189498,Download Python | Python.org,False
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2024-09-13-basketbal-train-ols%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://seaborn.pydata.org/generated/seaborn.violinplot.htmlhttps://seaborn.pydata.org/generated/seaborn.violinplot.html,404,HTTPError,HTTPError 404 - Not Found,9379,Page not found · GitHub Pages,False
+https://www.pineconedata.com/tags#pandas,200,,,30342,Posts by Topic,True
+https://jupyter-notebook.readthedocs.io/en/stable/public_server.html,404,HTTPError,HTTPError 404 - Not Found,2332,"
+      
+  Documentation page not found
+
+      
+      
+    - Read the Docs",False
+https://en.wikipedia.org/wiki/Self-signed_certificate,200,,,86832,Self-signed certificate - Wikipedia,False
+https://seaborn.pydata.org/generated/seaborn.heatmap.html,200,,,52743,seaborn.heatmap — seaborn 0.13.2 documentation,False
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.replace.html,200,,,83830,pandas.DataFrame.replace — pandas 2.2.3 documentation,False
+https://docs.python.org/3/library/os.html,200,,,848042,os â Miscellaneous operating system interfaces — Python 3.13.1 documentation,False
+https://letsencrypt.org/,200,,,53588,"
+     Let's Encrypt
+  ",False
+https://home.cern/news/news/physics/find-higgs-boson-lhc-public-data,200,,,128583,Find a Higgs boson in LHC public data | CERN,False
+https://requests.readthedocs.io/en/latest/,200,,,24538,Requests: HTTP for Humans™ — Requests 2.32.3 documentation,False
+https://twitter.com/intent/tweet?text=Jump+into+Data+Science+with+JupyterLab&url=https%3A%2F%2Fwww.pineconedata.com%2F2023-11-14-install-jupyterlab%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://beautifuljekyll.com,200,,,18102,Beautiful Jekyll,False
+https://www.pineconedata.com/page2,200,,,19859,Home | Pinecone Data Website,True
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-05-30-basketball-feature_engineering%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior,200,,,442123,datetime â Basic date and time types — Python 3.13.1 documentation,False
+https://en.wikipedia.org/wiki/Variance_inflation_factor,200,,,136647,Variance inflation factor - Wikipedia,False
+https://linuxhint.com/nano-editor-beginner-guide/,200,,,183934,"Nano Editor, How to Guide for Beginners",False
+https://en.wikipedia.org/wiki/Regression_analysis,200,,,456048,Regression analysis - Wikipedia,False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_excel.html,200,,,45543,pandas.DataFrame.to_excel — pandas 2.2.3 documentation,False
+https://github.com/pineconedata,200,,,174093,pineconedata (Pinecone Data) · GitHub,False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html,200,,,71596,pandas.DataFrame.merge — pandas 2.2.3 documentation,False
+https://www.freeprivacypolicy.com/blog/cookies/,403,HTTPError,HTTPError 403 - Forbidden,8260,Just a moment...,False
+https://www.pineconedata.com/tags#API,200,,,30342,Posts by Topic,True
+https://tylervigen.com/spurious-correlations,200,,,84199,Spurious Correlations,False
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html,200,,,154518,LinearRegression — scikit-learn 1.6.0 documentation,False
+https://www.ibm.com/topics/etl,200,,,139618,"What is ETL (Extract, Transform, Load)? | IBM",False
+https://www.pineconedata.com/tags#linear regression,200,,,30342,Posts by Topic,True
+https://twitter.com/intent/tweet?text=Project+Setup+and+Data+Acquisition&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-04-11-basketball-data-acquisition%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.espn.com/womens-college-basketball/,403,HTTPError,HTTPError 403 - Forbidden,919,ERROR: The request could not be satisfied,False
+https://en.wikipedia.org/wiki/SQL,200,,,334894,SQL - Wikipedia,False
+https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.pineconedata.com%2F2024-04-11-basketball-data-acquisition%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.pineconedata.com/tags#Linux,200,,,30342,Posts by Topic,True
+https://www.pineconedata.com/tags#self-host,200,,,30342,Posts by Topic,True
+https://www.pineconedata.com/tags#server,200,,,30342,Posts by Topic,True
+https://pandas.pydata.org/pandas-docs/stable/user_guide/text.html,200,,,167244,Working with text data — pandas 2.2.3 documentation,False
+https://sportsdata.io/developers/fantasy-scoring-system/nba,200,,,191893,NBA Fantasy Points | Fantasy Basketball Scoring System | SportsDataIO,False
+https://en.wikipedia.org/wiki/Kernel_density_estimationhttps://en.wikipedia.org/wiki/Kernel_density_estimation,404,HTTPError,HTTPError 404 - Not Found,47477,Kernel density estimationhttps://en.wikipedia.org/wiki/Kernel density estimation - Wikipedia,False
+https://docs.python.org/3/library/json.html,200,,,111599,json â JSON encoder and decoder — Python 3.13.1 documentation,False
+https://en.wikipedia.org/wiki/Radionuclide,200,,,198582,Radionuclide - Wikipedia,False
+https://web1.ncaa.org/stats/StatsSrv/rankings?doWhat=archive&sportCode=WBB,200,,,8441,NCAA Statistics,False
+https://en.wikipedia.org/wiki/Field_goal_(basketball),200,,,103097,Field goal (basketball) - Wikipedia,False
+https://matplotlib.org/,200,,,32918,Matplotlib — Visualization with Python,False
+https://developer.mozilla.org/en-US/,200,,,45488,MDN Web Docs,False
+https://en.wikipedia.org/wiki/Linear_regression,200,,,550508,Linear regression - Wikipedia,False
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-04-11-basketball-data-acquisition%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://twitter.com/intent/tweet?text=Automate+Your+News+Feed&url=https%3A%2F%2Fwww.pineconedata.com%2F2023-11-07-automated-feed-generator%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html,200,,,167766,train_test_split — scikit-learn 1.6.0 documentation,False
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-05-02-basketball-data-cleaning-preprocessing%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.pineconedata.com/tags#scipy,200,,,30342,Posts by Topic,True
+https://github.com/mozilla/geckodriver,200,,,280899,GitHub - mozilla/geckodriver: WebDriver for Firefox,False
+https://pineconedata.github.io,200,,,26839,Home | Pinecone Data Website,False
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2023-11-07-automated-feed-generator%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://www.statsmodels.org/stable/index.html,200,,,37838,statsmodels 0.14.4,False
+https://www.pineconedata.com/2024-05-02-basketball-data-cleaning-preprocessing/#handle-missing-three-point-percentages,200,,,90245,Data Cleaning and Preprocessing: Outlier or Caitlin Clark? [Part 2],True
+https://en.wikipedia.org/wiki/Linear_regression#Assumptions,200,,,550508,Linear regression - Wikipedia,False
+https://twitter.com/intent/tweet?text=Data+Visualizations+and+Feature+Selection&url=https%3A%2F%2Fwww.pineconedata.com%2F2024-07-29-basketball-visualizations%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://plotly.com/python/,200,,,73868,"
+    Plotly Python Graphing Library
+    
+",False
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.describe.html,200,,,72861,pandas.DataFrame.describe — pandas 2.2.3 documentation,False
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.max.html,200,,,59295,pandas.DataFrame.max — pandas 2.2.3 documentation,False
+https://en.wikipedia.org/wiki/Machine_learning,200,,,628887,Machine learning - Wikipedia,False
+https://pandas.pydata.org/docs/reference/api/pandas.merge.html,200,,,47822,pandas.merge — pandas 2.2.3 documentation,False
+https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.pineconedata.com%2F2023-11-14-install-jupyterlab%2F,,Excluded URL,Skipped URL as it matched pattern(s) in the excluded URL list.,0,,False
+https://en.wikipedia.org/wiki/Ordinary_least_squares,200,,,498595,Ordinary least squares - Wikipedia,False
+https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html,200,,,140106,Style sheets reference — Matplotlib 3.9.3 documentation,False
+https://www.pineconedata.com/tags#data visualization,200,,,30342,Posts by Topic,True
+https://en.wikipedia.org/wiki/Certificate_authority,200,,,209559,Certificate authority - Wikipedia,False
+https://en.wikipedia.org/wiki/Multicollinearity,200,,,154269,Multicollinearity - Wikipedia,False
+https://web.stanford.edu/class/stats191/markdown/Chapter8/Simple_Linear_Regression_Assumptions.html,200,,,125134,Simple Linear Regression Assumptions — STATS191,False
+https://en.wikipedia.org/wiki/Median,200,,,458226,Median - Wikipedia,False

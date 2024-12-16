@@ -26,10 +26,8 @@ def load_config(config_file):
 def get_url(url, timeout=10):
     """Send a GET request to the URL with the specified timeout."""
     try:
-        print(f'Retrieving page from {url}')
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
-        print(f'Retrieved page from {url}')
         return response, None, None
     except requests.exceptions.Timeout as e:
         error_details = f'The request to {url} exceeded the threshold of {timeout}'
@@ -62,7 +60,7 @@ def parse_sitemap(sitemap_content):
 
 def extract_domain(url):
     """Extract the domain from the given URL."""
-    try: 
+    try:
         parsed_url = urlparse(url)
         return parsed_url.netloc
     except Exception as e:
@@ -87,11 +85,11 @@ def is_url_excluded(url, urls_to_exclude):
         exclude_patterns = [re.compile(pattern) for pattern in urls_to_exclude]
         matched_url = [pattern.search(url) for pattern in exclude_patterns if pattern.search(url)]
         if matched_url:
-            print(f'Skipping {url} as it matches the pattern(s) {matched_url} in the excluded list.')
+            print(f'Skipping {url} as it matches pattern(s) {matched_url} in the excluded list.')
             return True
         return False
     except Exception as e:
-        print(f'Error: Failed to check if url is in the excluded list. Details: {e}')
+        print(f'Error: Failed to check if URL is in the excluded list. Details: {e}')
         return None
 
 
@@ -121,8 +119,25 @@ def extract_page_title(content):
         return None
 
 
-def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, data_file, timeout):
+def extract_urls_from_content(content):
+    """Extract all URLs from the HTML content using BeautifulSoup."""
+    try:
+        content = content.body
+        urls = set()
+        for a_tag in content.find_all('a', href=True):
+            href = a_tag['href']
+            if href.startswith('http'):
+                urls.add(href)
+        return list(urls)
+    except Exception as e:
+        print(f'Error: Failed to extract additional URLs. Details: {e}')
+        return []
+
+
+def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains,
+                 data_file, timeout, extract_urls):
     """Validate the URL by checking its status, title, and content for exclusions."""
+    print(f'Validating url at {url}')
     data = {
         'url': url,
         'response_code': None,
@@ -132,6 +147,7 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
         'page_title': None,
         'url_first_party': None
     }
+    additional_urls = []
 
     # determine if the URL is first-party or third-party
     data['url_first_party'] = is_url_first_party(url, first_party_domains)
@@ -139,9 +155,9 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
     # if url is excluded, log and return early
     if is_url_excluded(url, urls_to_exclude):
         data['exception'] = 'Excluded URL'
-        data['details'] = 'URL in excluded list'
+        data['details'] = 'Skipped URL as it matched pattern(s) in the excluded URL list.'
         write_data(data_file, **data)
-        return
+        return additional_urls
 
     # get url and update log data
     response, exception, details = get_url(url, timeout)
@@ -162,7 +178,12 @@ def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
             data['exception'] = 'Excluded Phrase'
             data['details'] = f'Response content contains excluded phrase(s): "{excluded_match}".'
 
+        # extract additional URLs from response content
+        if extract_urls:
+            additional_urls = extract_urls_from_content(response_content)
+
     write_data(data_file, **data)
+    return additional_urls
 
 
 def main():
@@ -184,6 +205,8 @@ def main():
     first_party_domains = config.get('first_party_domains', [extract_domain(sitemap_url)])
     request_timeout = config.get('timeout', 10)
     data_file = config.get('data_file_name', 'sitemap_link_validation.csv')
+    extract_urls = config.get('extract_additional_urls', False)
+    all_additional_urls = set()
 
     # initialize CSV file with headers
     with open(data_file, mode='w', newline='') as file:
@@ -195,8 +218,18 @@ def main():
     if sitemap_response:
         urls = parse_sitemap(sitemap_response)
         for url in urls:
-            validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
-                         data_file, request_timeout)
+            additional_urls = validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
+                                           data_file, request_timeout, extract_urls)
+            if additional_urls:
+                all_additional_urls.update(additional_urls)
+        # after processing sitemap URLs, update and validate the additional URLs
+        if all_additional_urls:
+            all_additional_urls.difference_update(urls)
+            print(f'Extracted {len(all_additional_urls)} additional unique URLs.')
+            for url in all_additional_urls:
+                additional_urls = validate_url(url, urls_to_exclude, phrases_to_exclude,
+                                               first_party_domains, data_file, request_timeout,
+                                               False)
 
 
 if __name__ == '__main__':

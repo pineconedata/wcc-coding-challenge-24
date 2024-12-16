@@ -1,7 +1,15 @@
 {
   "sitemap_url": "https://www.pineconedata.com/sitemap.xml",
-  "urls_to_exclude": ["^https://www.pineconedata.com/404"],
+  "urls_to_exclude": [
+    "^https://www.pineconedata.com/404",
+    "^https://www.facebook.com/sharer/sharer.php",
+    "^https://twitter.com/intent/tweet",
+    "^https://www.linkedin.com/shareArticle",
+    "^https://www.instagram.com/pinecone.data",
+    "^https://linkedin.com/in/emilyrcreager"
+  ],
   "phrases_to_exclude": ["this page doesn't exist", "link to it is broken"],
   "first_party_domains": ["www.pineconedata.com"],
-  "timeout": 10
+  "timeout": 10,
+  "extract_additional_urls": true
 }

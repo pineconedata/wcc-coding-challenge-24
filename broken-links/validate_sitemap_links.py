@@ -127,12 +127,9 @@ def extract_urls_from_content(content):
     """Extract all URLs and their link text from the HTML content using BeautifulSoup."""
     try:
         content = content.body
-        links = set()
-        for a_tag in content.find_all('a', href=True):
-            href = a_tag['href']
-            link_text = a_tag.get_text(strip=True)
-            if href.startswith('http'):
-                links.add((href, link_text))
+        links = {(a_tag['href'], a_tag.get_text(strip=True))
+                for a_tag in content.find_all('a', href=True)
+                if a_tag['href'].startswith('http')}
         return list(links)
     except Exception as e:
         logging.error(f'Failed to extract additional URLs. Details: {e}')

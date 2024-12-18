@@ -49,13 +49,13 @@ def get_url(url, timeout=10):
 def parse_sitemap(sitemap_content):
     """Parse the sitemap XML content and return a list of URLs."""
     try:
-        print('Parsing sitemap content.')
+        logging.info('Parsing sitemap content...')
         sitemap_content = sitemap_content.text
         soup = BeautifulSoup(sitemap_content, 'xml')
         urls = [loc.text for loc in soup.find_all('loc')]
-        print(f'Parsed sitemap content. Found {len(urls)} URLs.')
+        logging.info(f'Parsed sitemap content. Found {len(urls)} URLs.')
         if not urls:
-            print('No URLs found in the sitemap content.')
+            logging.info('No URLs found in the sitemap content.')
         return urls
     except Exception as e:
         logging.error(f'Failed to parse the sitemap XML. Details: {e}')
@@ -89,7 +89,7 @@ def is_url_excluded(url, urls_to_exclude):
         exclude_patterns = [re.compile(pattern) for pattern in urls_to_exclude]
         matched_url = [pattern.search(url) for pattern in exclude_patterns if pattern.search(url)]
         if matched_url:
-            print(f'Skipping {url} as it matches pattern(s) {matched_url} in the excluded list.')
+            logging.info(f'Skipping {url} as it matches pattern(s) {matched_url} in the excluded list.')
             return True
         return False
     except Exception as e:
@@ -105,7 +105,7 @@ def contains_excluded_phrases(content, phrases_to_exclude):
                            if re.search(phrase, content.get_text(), re.IGNORECASE)]
 
         if matched_phrases:
-            print(f'Excluded phrase(s) "{matched_phrases}" found in page.')
+            logging.info(f'Excluded phrase(s) "{matched_phrases}" found in page.')
             return matched_phrases
         return False
     except Exception as e:
@@ -139,7 +139,7 @@ def extract_urls_from_content(content):
 def validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains,
                  timeout, extract_urls):
     """Validate the URL by checking its status, title, and content for exclusions."""
-    print(f'Validating url at {url}')
+    logging.info(f'Validating URL at {url}')
     data = {
         'url': url,
         'response_code': None,
@@ -196,15 +196,15 @@ def main():
 
     sitemap_url = args.sitemap_url or config.get('sitemap_url')
     if not sitemap_url:
-        print("Error: 'sitemap_url' is required but not provided, either \
-              in the configuration file or via the command line.")
+        logging.error("Error: 'sitemap_url' is required but not provided, either \
+                      in the configuration file or via the command line.")
         sys.exit(1)
 
     urls_to_exclude = config.get('urls_to_exclude', [])
     phrases_to_exclude = config.get('phrases_to_exclude', [])
     first_party_domains = config.get('first_party_domains', [extract_domain(sitemap_url)])
     request_timeout = config.get('timeout', 10)
-    data_file = config.get('data_file_name', 'sitemap_link_validation.csv')
+    data_file = config.get('data_file', 'sitemap_link_validation.csv')
     extract_urls = config.get('extract_additional_urls', False)
     all_additional_urls = set()
 
@@ -221,8 +221,8 @@ def main():
             data = validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
                                 request_timeout, extract_urls)
             additional_urls = data.pop('additional_urls')
-            data['link_text'] = None
-            data['source_url'] = 'sitemap'
+            data['link_text'] = url
+            data['source_url'] = sitemap_url
             write_data(data_file, **data)
             if additional_urls:
                 additional_urls = [(additional_url, link_text, url) for additional_url,
@@ -232,7 +232,7 @@ def main():
         if all_additional_urls:
             all_additional_urls = [(url, link_text, source_url) for url, link_text, source_url
                                    in all_additional_urls if url not in urls]
-            print(f'Extracted {len(all_additional_urls)} additional unique URLs.')
+            logging.info(f'Extracted {len(all_additional_urls)} additional unique URLs.')
             for url, link_text, source_url in all_additional_urls:
                 data = validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
                                     request_timeout, False)

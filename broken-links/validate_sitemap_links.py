@@ -9,12 +9,12 @@ from urllib.parse import urlparse
 
 
 def write_data(data_file, url, response_code, exception, details, response_length,
-               page_title, url_first_party):
+               page_title, url_first_party, link_text, source_url):
     """Write the results to the CSV file."""
     with open(data_file, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([url, response_code, exception, details, response_length,
-                         page_title, url_first_party])
+                         page_title, url_first_party, link_text, source_url])
 
 
 def load_config(config_file):
@@ -120,15 +120,16 @@ def extract_page_title(content):
 
 
 def extract_urls_from_content(content):
-    """Extract all URLs from the HTML content using BeautifulSoup."""
+    """Extract all URLs and their link text from the HTML content using BeautifulSoup."""
     try:
         content = content.body
-        urls = set()
+        links = set()
         for a_tag in content.find_all('a', href=True):
             href = a_tag['href']
+            link_text = a_tag.get_text(strip=True)
             if href.startswith('http'):
-                urls.add(href)
-        return list(urls)
+                links.add((href, link_text))
+        return list(links)
     except Exception as e:
         print(f'Error: Failed to extract additional URLs. Details: {e}')
         return []
@@ -210,7 +211,7 @@ def main():
     with open(data_file, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['URL', 'Response Code', 'Exception', 'Details', 'Response Length',
-                        'Page Title', 'First Party'])
+                        'Page Title', 'First Party', 'Link Text', 'Source URL'])
 
     sitemap_response, exception, details = get_url(sitemap_url, request_timeout)
     if sitemap_response:
@@ -219,17 +220,24 @@ def main():
             data = validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
                                 request_timeout, extract_urls)
             additional_urls = data.pop('additional_urls')
+            data['link_text'] = None
+            data['source_url'] = 'sitemap'
             write_data(data_file, **data)
             if additional_urls:
+                additional_urls = [(additional_url, link_text, url) for additional_url,
+                                   link_text in additional_urls]
                 all_additional_urls.update(additional_urls)
         # after processing sitemap URLs, update and validate the additional URLs
         if all_additional_urls:
-            all_additional_urls.difference_update(urls)
+            all_additional_urls = [(url, link_text, source_url) for url, link_text, source_url
+                                   in all_additional_urls if url not in urls]
             print(f'Extracted {len(all_additional_urls)} additional unique URLs.')
-            for url in all_additional_urls:
+            for url, link_text, source_url in all_additional_urls:
                 data = validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
                                     request_timeout, False)
                 additional_urls = data.pop('additional_urls')
+                data['link_text'] = link_text
+                data['source_url'] = source_url
                 write_data(data_file, **data)
 
 

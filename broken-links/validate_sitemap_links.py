@@ -2,10 +2,14 @@ import re
 import csv
 import sys
 import json
+import logging
 import requests
 import argparse
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
 
 
 def write_data(data_file, url, response_code, exception, details, response_length,
@@ -31,14 +35,14 @@ def get_url(url, timeout=10):
         return response, None, None
     except requests.exceptions.Timeout as e:
         error_details = f'The request to {url} exceeded the threshold of {timeout}'
-        print(f'Error: {error_details}')
+        logging.error(f'{error_details}')
         return e.response, 'Timeout', error_details
     except requests.exceptions.HTTPError as e:
         error_details = f'HTTPError {e.response.status_code} - {e.response.reason}'
-        print(f'Error: {error_details} at {url}')
+        logging.error(f'{error_details} at {url}')
         return e.response, 'HTTPError', error_details
     except requests.exceptions.RequestException as e:
-        print(f'Error: Failed to fetch page from {url}. Details: {e}')
+        logging.error(f'Failed to fetch page from {url}. Details: {e}')
         return e.response, 'RequestException', str(e)
 
 
@@ -54,7 +58,7 @@ def parse_sitemap(sitemap_content):
             print('No URLs found in the sitemap content.')
         return urls
     except Exception as e:
-        print(f'Error: Failed to parse the sitemap XML. Details: {e}')
+        logging.error(f'Failed to parse the sitemap XML. Details: {e}')
         return []
 
 
@@ -64,7 +68,7 @@ def extract_domain(url):
         parsed_url = urlparse(url)
         return parsed_url.netloc
     except Exception as e:
-        print(f'Error: Failed extract domain from the URL. Details: {e}')
+        logging.error(f'Failed extract domain from the URL. Details: {e}')
         return url
 
 
@@ -75,7 +79,7 @@ def is_url_first_party(url, first_party_domains):
         domain = extract_domain(url)
         return domain in first_party_domains
     except Exception as e:
-        print(f'Error: Failed to check if url is in the excluded list. Details: {e}')
+        logging.error(f'Failed to check if url is in the excluded list. Details: {e}')
         return None
 
 
@@ -89,7 +93,7 @@ def is_url_excluded(url, urls_to_exclude):
             return True
         return False
     except Exception as e:
-        print(f'Error: Failed to check if URL is in the excluded list. Details: {e}')
+        logging.error(f'Failed to check if URL is in the excluded list. Details: {e}')
         return None
 
 
@@ -105,7 +109,7 @@ def contains_excluded_phrases(content, phrases_to_exclude):
             return matched_phrases
         return False
     except Exception as e:
-        print(f'Error: Failed to check if content contains excluded phrases. Details: {e}')
+        logging.error(f'Failed to check if content contains excluded phrases. Details: {e}')
         return None
 
 
@@ -115,7 +119,7 @@ def extract_page_title(content):
         title_tag = content.find('title')
         return title_tag.text if title_tag else None
     except Exception as e:
-        print(f'Error: Failed to extract page title. Details: {e}')
+        logging.error(f'Failed to extract page title. Details: {e}')
         return None
 
 
@@ -131,7 +135,7 @@ def extract_urls_from_content(content):
                 links.add((href, link_text))
         return list(links)
     except Exception as e:
-        print(f'Error: Failed to extract additional URLs. Details: {e}')
+        logging.error(f'Failed to extract additional URLs. Details: {e}')
         return []
 
 

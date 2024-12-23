@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(m
 def setup_driver():
     """Setup the webdriver with necessary options."""
     try:
+        logging.info('Setting up the selenium WebDriver...')
         options = FirefoxOptions()
         options.add_argument("--headless")
         driver = webdriver.Firefox(options=options)
@@ -27,7 +28,9 @@ def setup_driver():
 
 
 def get_cookies(driver):
+    """Get cookies from the given WebDriver and return the data in a DataFrame."""
     try:
+        logging.info('Getting cookies...')
         cookies = driver.get_cookies()
         cookies_df = pandas.DataFrame(cookies)
         return cookies_df
@@ -39,15 +42,28 @@ def get_cookies(driver):
         logging.error(f'Encountered error getting cookies. Details: {e}')
 
 
+def export_cookies(writer, df, sheet_name):
+    """Export the DataFrame to an Excel file in the specified sheet."""
+    try:
+        logging.info(f'Exporting cookies for {sheet_name}')
+        print(df)
+        df.to_excel(writer, sheet_name=sheet_name, index=None)
+        writer.close
+    except Exception as e:
+        logging.error(f'Encountered error exporting cookies to Excel. Details: {e}')
+
+
 if __name__ == "__main__":
-    homepage_url = 'https://www.pineconedata.com/'
+    export_file = 'cookies_data.xlsx'
 
     driver = setup_driver()
 
-    logging.info(f'Getting cookies for {homepage_url}')
-    driver.get(homepage_url)
-    driver.add_cookie({"name": "test", "value": "cookie"})
-    cookies = get_cookies(driver)
-    print(cookies)
+    with pandas.ExcelWriter(export_file, engine='xlsxwriter') as writer:
+        homepage_url = 'https://www.pineconedata.com/'
+        logging.info(f'Getting cookies for {homepage_url}')
+        driver.get(homepage_url)
+        driver.add_cookie({"name": "test", "value": "cookie"})
+        cookies = get_cookies(driver)
+        export_cookies(writer, cookies, 'homepage')
 
     driver.quit

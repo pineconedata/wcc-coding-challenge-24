@@ -13,4 +13,5 @@ To make a bit of progress (at least one commit) on this project every day for th
 1. Broken Link Validator
 2. Cookie Scraper
 3. Django App
+
 If one project is completed before the challenge ends, the next project in the list will be started.

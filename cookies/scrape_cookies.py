@@ -10,20 +10,22 @@ from selenium.webdriver.chrome.service import Service
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
 
 
-def setup_driver(browser_type):
+def setup_driver(browser_type, headless=False):
     """Setup the webdriver with necessary options for given browser type."""
     try:
         logging.info(f'Setting up the selenium WebDriver for {browser_type}...')
 
         if browser_type.lower() == 'firefox':
             options = FirefoxOptions()
-            options.add_argument("--headless")
+            if headless:
+                options.add_argument("--headless")
             driver = webdriver.Firefox(options=options)
 
         elif browser_type.lower() == 'chrome':
             service = Service('/usr/bin/chromedriver')
             options = ChromeOptions()
-            options.add_argument('--headless')
+            if headless:
+                options.add_argument('--headless')
             options.add_argument('--no-sandbox')
             driver = webdriver.Chrome(options=options, service=service)
 
@@ -39,6 +41,7 @@ def setup_driver(browser_type):
         sys.exit(1)
     except Exception as e:
         logging.error(f'Encountered error setting up WebDriver. Details: {e}')
+        sys.exit(1)
 
 
 def get_cookies(driver):
@@ -62,16 +65,16 @@ def export_cookies(writer, df, sheet_name):
     try:
         logging.info('Exporting cookies...')
         df.to_excel(writer, sheet_name=sheet_name, index=None)
-        writer.close
     except Exception as e:
         logging.error(f'Encountered error exporting cookies to Excel. Details: {e}')
 
 
 if __name__ == "__main__":
+    headless = True
     browser_type = 'chrome'
     export_file = f'cookies_data_{browser_type}.xlsx'
 
-    driver = setup_driver(browser_type)
+    driver = setup_driver(browser_type, headless)
 
     with pandas.ExcelWriter(export_file, engine='xlsxwriter') as writer:
         homepage_url = 'https://www.vrbo.com/'

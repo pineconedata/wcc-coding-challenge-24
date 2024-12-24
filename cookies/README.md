@@ -26,10 +26,11 @@ You can install the required libraries using `pip` or your preferred package man
 Configuration options are set within the script itself. 
 
 ### Configuration Options
-- `browser_type` *Required* The type of browser that should be used. **Not** case sensitive.
+- `browser_type` *Required, String* The type of browser that should be used. **Not** case sensitive.
   - `firefox` uses Firefox and the associated geckodriver.
   - `chrome` uses Chrome and the associated chromedriver. **Note** this specifically refers to Chrome, not any chromium-based browser.
-- `export_file` *Optional* The file path of the export data (`f'cookies_data_{browser_type}.xlsx'` by default).
+- `headless` *Optional, Boolean* Whether or not to start the browser in headless mode. If `True`, the browser window will not be visible. If `False`, the browser window will be visible while the script is running. 
+- `export_file` *Optional, String* The file path of the export data (`f'cookies_data_{browser_type}.xlsx'` by default).
 
 ## Usage
 To run the script with the default settings, execute it from the command line.
@@ -71,7 +72,7 @@ YYYY-MM-DD HH:MM:SS - LEVEL: Message
 
 ### Example
 ```bash
-2024-12-23 18:05:06,633 - INFO: Setting up the selenium WebDriver for chrome...
+2024-12-23 18:05:06,633 - INFO: Setting up the selenium WebDriver for firefox...
 2024-12-23 18:06:47,584 - INFO: Getting cookies...
 2024-12-23 18:06:51,969 - INFO: Cookies found: 10
 ```

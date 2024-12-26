@@ -1,7 +1,11 @@
+import os
 import sys
 import pandas
+import shutil
+import sqlite3
 import logging
 import selenium
+import tempfile
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions, ChromeOptions
 from selenium.webdriver.chrome.service import Service
@@ -27,10 +31,13 @@ def setup_driver(browser_type, headless=False):
             if headless:
                 options.add_argument('--headless')
             options.add_argument('--no-sandbox')
+            tempdir = tempfile.mkdtemp(dir=os.getcwd())
+            options.add_argument(f'--user-data-dir={tempdir}')
             driver = webdriver.Chrome(options=options, service=service)
 
         else:
             raise ValueError(f'Unsupported browser type: {browser_type}')
+            sys.exit(1)
 
         return driver
     except selenium.common.exceptions.SessionNotCreatedException as e:
@@ -44,18 +51,62 @@ def setup_driver(browser_type, headless=False):
         sys.exit(1)
 
 
-def get_cookies(driver):
+def get_cookies(driver, browser_type, cookie_method):
+    """Call the appropriate get_cookies_ function based on the given cookie_method."""
+    logging.info(f'Getting cookies from the {cookie_method}...')
+    if cookie_method.lower() == 'webdriver':
+        cookies_df = get_cookies_wd(driver)
+    elif cookie_method.lower() == 'database':
+        cookies_df = get_cookies_db(browser_type)
+    else:
+        raise ValueError(f'Unsupported cookie method: {cookie_method}')
+        sys.exit(1)
+    logging.info(f'Cookies found: {len(cookies_df)}')
+    return cookies_df
+
+
+def get_cookies_wd(driver):
     """Get cookies from the given WebDriver and return the data in a DataFrame."""
     try:
-        logging.info('Getting cookies...')
         cookies = driver.get_cookies()
         cookies_df = pandas.DataFrame(cookies)
-        logging.info(f'Cookies found: {len(cookies)}')
         return cookies_df
     except selenium.common.exceptions.TimeoutException as e:
         logging.error(f"Timeout while trying to retrieve cookies: {e}")
     except selenium.common.exceptions.WebDriverException as e:
         logging.error(f'WebDriver error encountered while getting cookies. Details: {e}')
+    except Exception as e:
+        logging.error(f'Encountered error getting cookies. Details: {e}')
+
+
+def get_cookies_db(browser_type):
+    """Get cookies from the given browser's cookie database and return the data in a DataFrame."""
+    try:
+        if browser_type.lower() == 'firefox':
+            query = 'SELECT * FROM moz_cookies'
+            profile_dir = driver.capabilities['moz:profile']
+            database_path = f'{profile_dir}/cookies.sqlite'
+            temp_db = f'{os.getcwd()}/cookies.sqlite'
+        elif browser_type.lower() == 'chrome':
+            query = 'SELECT * FROM cookies'
+            profile_dir = driver.capabilities['chrome']['userDataDir']
+            database_path = f'{profile_dir}/Default/Cookies'
+            temp_db = f'{os.getcwd()}/Cookies'
+
+        if not os.path.exists(database_path):
+            raise ValueError(f'Cookies database not found at: {database_path}')
+            sys.exit(1)
+
+        shutil.copy(database_path, temp_db)
+        conn = sqlite3.connect(temp_db)
+        cursor = conn.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        cols = [description[0] for description in cursor.description]
+        os.remove(temp_db)
+
+        cookies_df = pandas.DataFrame(data=rows, columns=cols)
+        return cookies_df
     except Exception as e:
         logging.error(f'Encountered error getting cookies. Details: {e}')
 
@@ -71,15 +122,16 @@ def export_cookies(writer, df, sheet_name):
 
 if __name__ == "__main__":
     headless = True
-    browser_type = 'chrome'
-    export_file = f'cookies_data_{browser_type}.xlsx'
+    browser_type = 'firefox'
+    cookie_method = 'database'
+    export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
     driver = setup_driver(browser_type, headless)
 
     with pandas.ExcelWriter(export_file, engine='xlsxwriter') as writer:
-        homepage_url = 'https://www.vrbo.com/'
+        homepage_url = 'https://www.pineconedata.com/'
         driver.get(homepage_url)
-        cookies = get_cookies(driver)
+        cookies = get_cookies(driver, browser_type, cookie_method)
         export_cookies(writer, cookies, 'homepage')
 
     driver.quit

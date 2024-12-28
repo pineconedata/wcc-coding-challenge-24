@@ -111,11 +111,12 @@ def get_cookies_db(browser_type):
         logging.error(f'Encountered error getting cookies. Details: {e}')
 
 
-def export_cookies(writer, df, sheet_name):
+def export_cookies(df, excel_writer, **kwargs):
     """Export the DataFrame to an Excel file in the specified sheet."""
     try:
         logging.info('Exporting cookies...')
-        df.to_excel(writer, sheet_name=sheet_name, index=None)
+        df.to_excel(excel_writer, **kwargs)
+        logging.info(f'Cookies exported to: {excel_writer}')
     except Exception as e:
         logging.error(f'Encountered error exporting cookies to Excel. Details: {e}')
 
@@ -152,16 +153,13 @@ if __name__ == "__main__":
     headless = True
     browser_type = 'firefox'
     cookie_method = 'webdriver'
+    url = 'https://www.pineconedata.com/'
     export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
     driver = setup_driver(browser_type, headless)
-
-    with pandas.ExcelWriter(export_file, engine='xlsxwriter') as writer:
-        homepage_url = 'https://www.pineconedata.com/'
-        driver.get(homepage_url)
-        driver = add_sample_cookies(driver)
-        cookies = get_cookies(driver, browser_type, cookie_method)
-        export_cookies(writer, cookies, 'homepage')
+    driver.get(url)
+    driver = add_sample_cookies(driver)
+    cookies = get_cookies(driver, browser_type, cookie_method)
+    export_cookies(cookies, export_file, index=False)
 
     driver.quit()
-    logging.info(f'Cookies exported to: {export_file}')

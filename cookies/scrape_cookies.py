@@ -22,7 +22,7 @@ def setup_driver(browser_type, headless=False):
         if browser_type.lower() == 'firefox':
             options = FirefoxOptions()
             if headless:
-                options.add_argument("--headless")
+                options.add_argument('--headless')
             driver = webdriver.Firefox(options=options)
 
         elif browser_type.lower() == 'chrome':
@@ -72,7 +72,7 @@ def get_cookies_wd(driver):
         cookies_df = pandas.DataFrame(cookies)
         return cookies_df
     except selenium.common.exceptions.TimeoutException as e:
-        logging.error(f"Timeout while trying to retrieve cookies: {e}")
+        logging.error(f'Timeout while trying to retrieve cookies: {e}')
     except selenium.common.exceptions.WebDriverException as e:
         logging.error(f'WebDriver error encountered while getting cookies. Details: {e}')
     except Exception as e:
@@ -120,10 +120,38 @@ def export_cookies(writer, df, sheet_name):
         logging.error(f'Encountered error exporting cookies to Excel. Details: {e}')
 
 
+def add_sample_cookies(driver):
+    """Add sample cookies to the given WebDriver instance."""
+    driver.add_cookie({
+        "name": "sampleCookie1",
+        "value": "this is a secure sample cookie",
+        "secure": True,
+        "httpOnly": False,
+        "expiry": 1735673037,
+        "sameSite": "Lax"
+    })
+    driver.add_cookie({
+        "name": "sampleCookie2",
+        "value": "this is a HTTP Only sample cookie",
+        "secure": True,
+        "httpOnly": True,
+        "expiry": 1735673100,
+        "sameSite": "Strict"
+    })
+    driver.add_cookie({
+        "name": "sampleCookie3",
+        "value": "this is another sample cookie",
+        "secure": False,
+        "httpOnly": True,
+        "sameSite": "None"
+    })
+    return driver
+
+
 if __name__ == "__main__":
     headless = True
     browser_type = 'firefox'
-    cookie_method = 'database'
+    cookie_method = 'webdriver'
     export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
     driver = setup_driver(browser_type, headless)
@@ -131,8 +159,9 @@ if __name__ == "__main__":
     with pandas.ExcelWriter(export_file, engine='xlsxwriter') as writer:
         homepage_url = 'https://www.pineconedata.com/'
         driver.get(homepage_url)
+        driver = add_sample_cookies(driver)
         cookies = get_cookies(driver, browser_type, cookie_method)
         export_cookies(writer, cookies, 'homepage')
 
-    driver.quit
+    driver.quit()
     logging.info(f'Cookies exported to: {export_file}')

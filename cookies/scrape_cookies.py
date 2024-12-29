@@ -32,7 +32,7 @@ def setup_driver(browser_type, headless=False):
             if headless:
                 options.add_argument('--headless')
             options.add_argument('--no-sandbox')
-            tempdir = tempfile.mkdtemp(dir=os.getcwd())
+            tempdir = tempfile.mkdtemp(dir=os.getcwd(), prefix='chromedriver_')
             options.add_argument(f'--user-data-dir={tempdir}')
             driver = webdriver.Chrome(options=options, service=service)
             profile_dir = driver.capabilities['chrome']['userDataDir']
@@ -151,8 +151,8 @@ def add_sample_cookies(driver):
 
 if __name__ == "__main__":
     headless = True
-    browser_type = 'firefox'
-    cookie_method = 'webdriver'
+    browser_type = 'chrome'
+    cookie_method = 'database'
     url = 'https://www.pineconedata.com/'
     export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
@@ -163,3 +163,5 @@ if __name__ == "__main__":
     export_cookies(cookies, export_file, index=False)
 
     driver.quit()
+
+    shutil.rmtree(profile_dir)

@@ -159,9 +159,14 @@ if __name__ == "__main__":
     driver, profile_dir = setup_driver(browser_type, headless)
     driver.get(url)
     driver = add_sample_cookies(driver)
-    cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
-    export_cookies(cookies, export_file, index=False)
+
+    if cookie_method.lower() == 'webdriver':
+        cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
+        export_cookies(cookies, export_file, index=False)
 
     driver.quit()
+    if cookie_method.lower() == 'database':
+        cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
+        export_cookies(cookies, export_file, index=False)
 
     shutil.rmtree(profile_dir)

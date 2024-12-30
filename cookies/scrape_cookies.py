@@ -1,17 +1,29 @@
 import os
 import sys
-import pandas
 import shutil
 import sqlite3
 import logging
 import selenium
 import tempfile
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions, ChromeOptions
 from selenium.webdriver.chrome.service import Service
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
+
+
+def win_to_unix_epoch(win_epoch):
+    """Convert Windows epoch to Unix epoch and return Unix epoch."""
+    WIN_EPOCH_TO_UNIX_OFFSET = 11644473600
+    MICROSECONDS_IN_SECOND = 1000000
+
+    if not isinstance(win_epoch, (int, float)):
+        raise ValueError("win_epoch must be an integer or float.")
+
+    unix_epoch = (win_epoch / MICROSECONDS_IN_SECOND) - WIN_EPOCH_TO_UNIX_OFFSET
+    return unix_epoch
 
 
 def setup_driver(browser_type, headless=False):
@@ -71,7 +83,7 @@ def get_cookies_wd(driver):
     """Get cookies from the given WebDriver and return the data in a DataFrame."""
     try:
         cookies = driver.get_cookies()
-        cookies_df = pandas.DataFrame(cookies)
+        cookies_df = pd.DataFrame(cookies)
         return cookies_df
     except selenium.common.exceptions.TimeoutException as e:
         logging.error(f'Timeout while trying to retrieve cookies: {e}')
@@ -105,10 +117,28 @@ def get_cookies_db(browser_type, profile_dir):
         cols = [description[0] for description in cursor.description]
         os.remove(temp_db)
 
-        cookies_df = pandas.DataFrame(data=rows, columns=cols)
+        cookies_df = pd.DataFrame(data=rows, columns=cols)
         return cookies_df
     except Exception as e:
         logging.error(f'Encountered error getting cookies. Details: {e}')
+
+
+def format_cookies(df):
+    """Apply formatting changes to cookies dataframe amd return the formatted df."""
+    try:
+        logging.info('Formatting cookies...')
+        bool_cols = ['is_secure', 'is_httponly', 'has_expires', 'is_persistent', 'has_cross_site_ancestor']
+        time_cols = ['creation_utc', 'expires_utc', 'last_access_utc', 'last_update_utc']
+        df['priority'] = df['priority'].replace({0: 'Low', 1: 'Medium', 2: 'High'})
+        df['samesite'] = df['samesite'].replace({0: 'None', 1: 'Lax', 2: 'Strict'})
+        df[bool_cols] = df[bool_cols].astype(bool)
+        df[time_cols] = df[time_cols].apply(
+            lambda col: pd.to_datetime(
+                col.apply(win_to_unix_epoch), unit='s', utc=True, errors='coerce').dt.tz_localize(None)
+        )
+        return df
+    except Exception as e:
+        logging.error(f'Encountered error formatting cookies. Details: {e}')
 
 
 def export_cookies(df, excel_writer, **kwargs):
@@ -167,6 +197,7 @@ if __name__ == "__main__":
     driver.quit()
     if cookie_method.lower() == 'database':
         cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
+        cookies = format_cookies(cookies)
         export_cookies(cookies, export_file, index=False)
 
     shutil.rmtree(profile_dir)

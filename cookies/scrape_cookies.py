@@ -31,14 +31,14 @@ def setup_driver(browser_type, headless=False):
     try:
         logging.info(f'Setting up the selenium WebDriver for {browser_type}...')
 
-        if browser_type.lower() == 'firefox':
+        if browser_type == 'firefox':
             options = FirefoxOptions()
             if headless:
                 options.add_argument('--headless')
             driver = webdriver.Firefox(options=options)
             profile_dir = driver.capabilities['moz:profile']
 
-        elif browser_type.lower() == 'chrome':
+        elif browser_type == 'chrome':
             service = Service('/usr/bin/chromedriver')
             options = ChromeOptions()
             if headless:
@@ -67,9 +67,9 @@ def setup_driver(browser_type, headless=False):
 def get_cookies(driver, browser_type, cookie_method, profile_dir):
     """Call the appropriate get_cookies_ function based on the given cookie_method."""
     logging.info(f'Getting cookies using the {cookie_method} method...')
-    if cookie_method.lower() == 'webdriver':
+    if cookie_method == 'webdriver':
         cookies_df = get_cookies_wd(driver)
-    elif cookie_method.lower() == 'database':
+    elif cookie_method == 'database':
         cookies_df = get_cookies_db(browser_type, profile_dir)
     else:
         raise ValueError(f'Unsupported cookie method: {cookie_method}')
@@ -94,11 +94,11 @@ def get_cookies_wd(driver):
 def get_cookies_db(browser_type, profile_dir):
     """Get cookies from the given browser's cookie database and return the data in a DataFrame."""
     try:
-        if browser_type.lower() == 'firefox':
+        if browser_type == 'firefox':
             query = 'SELECT * FROM moz_cookies'
             database_path = f'{profile_dir}/cookies.sqlite'
             temp_db = f'{os.getcwd()}/cookies.sqlite'
-        elif browser_type.lower() == 'chrome':
+        elif browser_type == 'chrome':
             query = 'SELECT * FROM cookies'
             database_path = f'{profile_dir}/Default/Cookies'
             temp_db = f'{os.getcwd()}/Cookies'
@@ -193,7 +193,7 @@ def cleanup(driver=None, profile_dir=None):
             logging.error(f'WebDriverException encountered when quitting the webdriver. Details: {e}')
         except Exception as e:
             logging.error(f'Error while quitting the driver. Details: {e}')
-
+    logging.info(f'Profile dir condition: {bool(profile_dir)} and {os.path.exists(profile_dir)}')
     if profile_dir and os.path.exists(profile_dir):
         try:
             shutil.rmtree(profile_dir)
@@ -213,16 +213,18 @@ if __name__ == "__main__":
         url = 'https://www.pineconedata.com/'
         export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
+        browser_type = browser_type.lower()
+        cookie_method = cookie_method.lower()
         driver, profile_dir = setup_driver(browser_type, headless)
         driver.get(url)
         driver = add_sample_cookies(driver)
 
-        if cookie_method.lower() == 'webdriver':
+        if not (browser_type == 'chrome' and cookie_method == 'database'):
             cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
             export_cookies(cookies, export_file, index=False)
 
         driver.quit()
-        if cookie_method.lower() == 'database':
+        if browser_type == 'chrome' and cookie_method == 'database':
             cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
             cookies = format_cookies(cookies)
             export_cookies(cookies, export_file, index=False)

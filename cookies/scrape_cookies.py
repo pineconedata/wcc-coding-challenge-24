@@ -193,11 +193,14 @@ def cleanup(driver=None, profile_dir=None):
             logging.error(f'WebDriverException encountered when quitting the webdriver. Details: {e}')
         except Exception as e:
             logging.error(f'Error while quitting the driver. Details: {e}')
-    logging.info(f'Profile dir condition: {bool(profile_dir)} and {os.path.exists(profile_dir)}')
+
     if profile_dir and os.path.exists(profile_dir):
         try:
-            shutil.rmtree(profile_dir)
-            logging.info(f'Cleaned up profile directory at {profile_dir}')
+            if os.path.exists(profile_dir):
+                shutil.rmtree(profile_dir)
+                logging.info(f'Cleaned up profile directory at {profile_dir}')
+            else:
+                logging.info(f'
         except Exception as e:
             logging.error(f'Error while removing profile directory. Details: {e}')
 

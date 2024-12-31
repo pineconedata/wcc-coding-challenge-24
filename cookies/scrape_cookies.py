@@ -194,13 +194,13 @@ def cleanup(driver=None, profile_dir=None):
         except Exception as e:
             logging.error(f'Error while quitting the driver. Details: {e}')
 
-    if profile_dir and os.path.exists(profile_dir):
+    if profile_dir:
         try:
             if os.path.exists(profile_dir):
                 shutil.rmtree(profile_dir)
                 logging.info(f'Cleaned up profile directory at {profile_dir}')
             else:
-                logging.info(f'
+                logging.info(f'Cleaned up profile directory at {profile_dir} (previously removed or does not exist)')
         except Exception as e:
             logging.error(f'Error while removing profile directory. Details: {e}')
 
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     try:
         headless = True
         browser_type = 'firefox'
-        cookie_method = 'database'
+        cookie_method = 'webdriver'
         url = 'https://www.pineconedata.com/'
         export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
@@ -224,13 +224,14 @@ if __name__ == "__main__":
 
         if not (browser_type == 'chrome' and cookie_method == 'database'):
             cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
-            export_cookies(cookies, export_file, index=False)
 
-        driver.quit()
-        if browser_type == 'chrome' and cookie_method == 'database':
-            cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
+        if cookie_method == 'database':
+            if browser_type == 'chrome':
+                driver.quit()
+                cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
             cookies = format_cookies(cookies)
-            export_cookies(cookies, export_file, index=False)
+
+        export_cookies(cookies, export_file, index=False)
     except Exception as e:
         logging.error(f'Error: {e}')
     finally:

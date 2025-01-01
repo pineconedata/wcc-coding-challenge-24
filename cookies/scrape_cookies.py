@@ -1,11 +1,11 @@
 import os
-import sys
 import shutil
 import sqlite3
 import logging
 import selenium
 import tempfile
 import pandas as pd
+from urllib.parse import unquote
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions, ChromeOptions
 from selenium.webdriver.chrome.service import Service
@@ -122,19 +122,64 @@ def get_cookies_db(browser_type, profile_dir):
         raise
 
 
-def format_cookies(df):
-    """Format given cookies dataframe."""
+def format_cookies_chrome(df):
+    """Format given cookies dataframe for chrome browser_type."""
     try:
         logging.info('Formatting cookies...')
+        df['sameSite'] = df['samesite'].replace({0: 'None', 1: 'Lax', 2: 'Strict'})
         bool_cols = ['is_secure', 'is_httponly', 'has_expires', 'is_persistent', 'has_cross_site_ancestor']
-        time_cols = ['creation_utc', 'expires_utc', 'last_access_utc', 'last_update_utc']
-        df['priority'] = df['priority'].replace({0: 'Low', 1: 'Medium', 2: 'High'})
-        df['samesite'] = df['samesite'].replace({0: 'None', 1: 'Lax', 2: 'Strict'})
         df[bool_cols] = df[bool_cols].astype(bool)
-        df[time_cols] = df[time_cols].apply(
-            lambda col: pd.to_datetime(
+
+        df['priority'] = df['priority'].replace({0: 'Low', 1: 'Medium', 2: 'High'})
+        time_cols = ['creation_utc', 'expires_utc', 'last_access_utc', 'last_update_utc']
+        df[time_cols] = df[time_cols].apply(lambda col: pd.to_datetime(
                 col.apply(win_to_unix_epoch), unit='s', utc=True, errors='coerce').dt.tz_localize(None)
-        )
+            )
+
+        cols_to_rename = {
+            'is_secure': 'isSecure',
+            'is_httponly': 'isHttpOnly',
+            'has_expires': 'hasExpires',
+            'is_persistent': 'isPersistent',
+            'has_cross_site_ancestor': 'hasCrossSiteAncestor',
+            'creation_utc': 'creationTime',
+            'expires_utc': 'expiryTime',
+            'last_access_utc': 'lastAccessedTime',
+            'last_update_utc': 'lastUpdatedTime',
+            'source_scheme': 'sourceScheme',
+            'source_port': 'sourcePort',
+            'source_type': 'sourceType',
+            'host_key': 'host'
+        }
+        df.rename(columns=cols_to_rename, inplace=True)
+        cols_to_drop = ['top_frame_site_key', 'samesite']
+        df.drop(columns=cols_to_drop, inplace=True)
+        return df
+    except Exception as e:
+        logging.error(f'Encountered error formatting cookies. Details: {e}')
+        raise
+
+
+def format_cookies_firefox(df):
+    """Format given cookies dataframe for firefox browser_type."""
+    try:
+        logging.info('Formatting cookies...')
+        df['sameSite'] = df['sameSite'].replace({0: 'None', 1: 'Lax', 2: 'Strict'})
+        bool_cols = ['isSecure', 'isHttpOnly', 'inBrowserElement', 'isPartitionedAttributeSet']
+        df[bool_cols] = df[bool_cols].astype(bool)
+
+        df['lastAccessed'] = pd.to_datetime(df['lastAccessed'], unit='us', errors='coerce').dt.tz_localize(None)
+        df['creationTime'] = pd.to_datetime(df['creationTime'], unit='us', errors='coerce').dt.tz_localize(None)
+        df['expiry'] = pd.to_datetime(df['expiry'], unit='s', errors='coerce').dt.tz_localize(None)
+        df['originAttributes'] = df['originAttributes'].apply(unquote)
+
+        cols_to_rename = {
+            'lastAccessed': 'lastAccessedTime',
+            'expiry': 'expiryTime'
+        }
+        df.rename(columns=cols_to_rename, inplace=True)
+        cols_to_drop = ['id', 'rawSameSite']
+        df.drop(columns=cols_to_drop, inplace=True)
         return df
     except Exception as e:
         logging.error(f'Encountered error formatting cookies. Details: {e}')
@@ -211,8 +256,8 @@ if __name__ == "__main__":
 
     try:
         headless = True
-        browser_type = 'firefox'
-        cookie_method = 'webdriver'
+        browser_type = 'chrome'
+        cookie_method = 'database'
         url = 'https://www.pineconedata.com/'
         export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
@@ -229,7 +274,9 @@ if __name__ == "__main__":
             if browser_type == 'chrome':
                 driver.quit()
                 cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
-            cookies = format_cookies(cookies)
+                cookies = format_cookies_chrome(cookies)
+            else:
+                cookies = format_cookies_firefox(cookies)
 
         export_cookies(cookies, export_file, index=False)
     except Exception as e:

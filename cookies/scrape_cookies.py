@@ -7,6 +7,7 @@ import tempfile
 import pandas as pd
 from urllib.parse import unquote
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver import FirefoxOptions, ChromeOptions
 from selenium.webdriver.chrome.service import Service
 
@@ -126,7 +127,7 @@ def format_cookies_chrome(df):
     """Format given cookies dataframe for chrome browser_type."""
     try:
         logging.info('Formatting cookies...')
-        df['sameSite'] = df['samesite'].replace({0: 'None', 1: 'Lax', 2: 'Strict'})
+        df['sameSite'] = df['samesite'].replace({-1: '', 0: 'None', 1: 'Lax', 2: 'Strict'})
         bool_cols = ['is_secure', 'is_httponly', 'has_expires', 'is_persistent', 'has_cross_site_ancestor']
         df[bool_cols] = df[bool_cols].astype(bool)
 
@@ -164,7 +165,7 @@ def format_cookies_firefox(df):
     """Format given cookies dataframe for firefox browser_type."""
     try:
         logging.info('Formatting cookies...')
-        df['sameSite'] = df['sameSite'].replace({0: 'None', 1: 'Lax', 2: 'Strict'})
+        df['sameSite'] = df['sameSite'].replace({-1: '', 0: 'None', 1: 'Lax', 2: 'Strict'})
         bool_cols = ['isSecure', 'isHttpOnly', 'inBrowserElement', 'isPartitionedAttributeSet']
         df[bool_cols] = df[bool_cols].astype(bool)
 
@@ -266,6 +267,7 @@ if __name__ == "__main__":
         driver, profile_dir = setup_driver(browser_type, headless)
         driver.get(url)
         driver = add_sample_cookies(driver)
+        WebDriverWait(driver, 45).until(lambda wd: wd.execute_script('return document.readyState') == 'complete')
 
         if not (browser_type == 'chrome' and cookie_method == 'database'):
             cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)

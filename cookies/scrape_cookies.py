@@ -165,7 +165,7 @@ def format_cookies_chrome(df):
             'is_persistent': 'isPersistent',
             'has_cross_site_ancestor': 'hasCrossSiteAncestor',
             'creation_utc': 'creationTime',
-            'expires_utc': 'expiryTime',
+            'expires_utc': 'expiry',
             'last_access_utc': 'lastAccessedTime',
             'last_update_utc': 'lastUpdatedTime',
             'source_scheme': 'sourceScheme',
@@ -196,8 +196,7 @@ def format_cookies_firefox(df):
         df['originAttributes'] = df['originAttributes'].apply(unquote)
 
         cols_to_rename = {
-            'lastAccessed': 'lastAccessedTime',
-            'expiry': 'expiryTime'
+            'lastAccessed': 'lastAccessedTime'
         }
         df.rename(columns=cols_to_rename, inplace=True)
         cols_to_drop = ['id', 'rawSameSite']
@@ -285,7 +284,7 @@ if __name__ == "__main__":
         # configuration settings for web scraping
         headless = True
         add_sample_cookies_flag = True
-        browser_type = 'chrome'
+        browser_type = 'firefox'
         cookie_method = 'webdriver'
         url = 'https://www.pineconedata.com/'
         export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
@@ -311,6 +310,7 @@ if __name__ == "__main__":
                 cookies = format_cookies_chrome(cookies)
             else:
                 cookies = format_cookies_firefox(cookies)
+        cookies['expiry'] = cookies['expiry'].fillna('session')
 
         export_cookies(cookies, export_file, index=False)
     except Exception as e:

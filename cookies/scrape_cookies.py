@@ -7,6 +7,7 @@ import tempfile
 import pandas as pd
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
+from datetime import datetime, timedelta
 from urllib.parse import unquote
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -220,12 +221,16 @@ def export_cookies(df, excel_writer, **kwargs):
 
 def add_sample_cookies(driver):
     """Add sample cookies to the given WebDriver instance."""
+    logging.info('Adding sample cookies...')
+    current_time_utc = datetime.utcnow()
+    one_week_utc = int((current_time_utc + timedelta(weeks=1)).timestamp())
+    thirty_day_utc = int((current_time_utc + timedelta(days=30)).timestamp())
     driver.add_cookie({
         "name": "sampleCookie1",
         "value": "this is a secure sample cookie",
         "secure": True,
         "httpOnly": False,
-        "expiry": 1735673037,
+        "expiry": one_week_utc,
         "sameSite": "Lax"
     })
     driver.add_cookie({
@@ -233,7 +238,7 @@ def add_sample_cookies(driver):
         "value": "this is a HTTP Only sample cookie",
         "secure": True,
         "httpOnly": True,
-        "expiry": 1735673100,
+        "expiry": thirty_day_utc,
         "sameSite": "Strict"
     })
     driver.add_cookie({
@@ -272,26 +277,33 @@ def cleanup(driver=None, profile_dir=None):
 
 
 if __name__ == "__main__":
+    # initialize variables
     driver = None
     profile_dir = None
 
     try:
+        # configuration settings for web scraping
         headless = True
+        add_sample_cookies_flag = True
         browser_type = 'chrome'
-        cookie_method = 'database'
+        cookie_method = 'webdriver'
         url = 'https://www.pineconedata.com/'
         export_file = f'cookies_data_{browser_type}_{cookie_method}.xlsx'
 
+        # normalize variables
         browser_type = browser_type.lower()
         cookie_method = cookie_method.lower()
+
+        # setup webdriver and navigate to page
         driver, profile_dir = setup_driver(browser_type, headless)
         driver.get(url)
-        driver = add_sample_cookies(driver)
+        if add_sample_cookies_flag:
+            driver = add_sample_cookies(driver)
         WebDriverWait(driver, 45).until(lambda wd: wd.execute_script('return document.readyState') == 'complete')
 
+        # get and format cookies depending on browser type and cookie method
         if not (browser_type == 'chrome' and cookie_method == 'database'):
             cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
-
         if cookie_method == 'database':
             if browser_type == 'chrome':
                 driver.quit()

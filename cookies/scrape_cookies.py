@@ -1,5 +1,4 @@
 import os
-import json
 import shutil
 import sqlite3
 import logging
@@ -126,21 +125,24 @@ def get_cookies_db(browser_type, profile_dir):
         raise
 
 
-def decrypt_value(encrypted_value, profile_dir):
+def decrypt_value(encrypted_value):
     """Decrypts an encrypted value based on its version and returns the decrypted string."""
-    version, encrypted_value = encrypted_value[:3].decode().lower(), encrypted_value[3:]
-    logging.info(f'Decrypting cookies [{version}]...')
-    if version.lower() == 'v10':
-        key = PBKDF2(password='peanuts'.encode('utf-8'), salt=b'saltysalt', dkLen=16, count=1)
-        cipher = AES.new(key, AES.MODE_CBC, IV=b' ' * 16)
-        decrypted = cipher.decrypt(encrypted_value)
-        padding_length = decrypted[-1]
-        return decrypted[32:-padding_length].decode('utf-8')
-    else:
-        raise ValueError(f'Unsupported encryption version: {version}')
+    try:
+        version, encrypted_value = encrypted_value[:3].decode().lower(), encrypted_value[3:]
+        if version.lower() == 'v10':
+            key = PBKDF2(password='peanuts'.encode('utf-8'), salt=b'saltysalt', dkLen=16, count=1)
+            cipher = AES.new(key, AES.MODE_CBC, IV=b' ' * 16)
+            decrypted = cipher.decrypt(encrypted_value)
+            padding_length = decrypted[-1]
+            return decrypted[32:-padding_length].decode('utf-8')
+        else:
+            raise ValueError(f'Unsupported cookie encryption version: {version}')
+    except Exception as e:
+        logging.error(f'Encountered error decrypting cookie values. Details: {e}')
+        raise
 
 
-def format_cookies_chrome(df, profile_dir):
+def format_cookies_chrome(df):
     """Format given cookies dataframe for chrome browser_type."""
     try:
         logging.info('Formatting cookies...')
@@ -154,7 +156,7 @@ def format_cookies_chrome(df, profile_dir):
                 col.apply(win_to_unix_epoch), unit='s', utc=True, errors='coerce').dt.tz_localize(None)
             )
 
-        df['decrypted_value'] = df['encrypted_value'].apply(decrypt_value, profile_dir=profile_dir)
+        df['decryptedValue'] = df['encrypted_value'].apply(decrypt_value).fillna(df['value'])
         cols_to_rename = {
             'is_secure': 'isSecure',
             'is_httponly': 'isHttpOnly',
@@ -171,7 +173,7 @@ def format_cookies_chrome(df, profile_dir):
             'host_key': 'host'
         }
         df.rename(columns=cols_to_rename, inplace=True)
-        cols_to_drop = ['top_frame_site_key', 'samesite']
+        cols_to_drop = ['top_frame_site_key', 'samesite', 'value', 'encrypted_value']
         df.drop(columns=cols_to_drop, inplace=True)
         return df
     except Exception as e:
@@ -294,7 +296,7 @@ if __name__ == "__main__":
             if browser_type == 'chrome':
                 driver.quit()
                 cookies = get_cookies(driver, browser_type, cookie_method, profile_dir)
-                cookies = format_cookies_chrome(cookies, profile_dir)
+                cookies = format_cookies_chrome(cookies)
             else:
                 cookies = format_cookies_firefox(cookies)
 

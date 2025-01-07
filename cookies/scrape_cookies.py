@@ -147,11 +147,34 @@ def format_cookies_chrome(df):
     """Format given cookies dataframe for chrome browser_type."""
     try:
         logging.info('Formatting cookies...')
-        df['sameSite'] = df['samesite'].replace({-1: '', 0: 'None', 1: 'Lax', 2: 'Strict'})
+        samesite_map = {
+            -1: '',
+            0: 'None',
+            1: 'Lax',
+            2: 'Strict'
+        }
+        priority_map = {
+            0: 'Low',
+            1: 'Medium',
+            2: 'High'
+        }
+        source_scheme_map = {
+            0: 'Unset',
+            2: 'Secure'
+        }
+        source_type_map = {
+            0: 'Unknown',
+            1: 'HTTP',
+            2: 'Script',
+            3: 'Other'
+        }
+        df['sameSite'] = df['samesite'].replace(samesite_map)
+        df['priority'] = df['priority'].replace(priority_map)
+        df['source_scheme'] = df['source_scheme'].replace(source_scheme_map)
+        df['source_type'] = df['source_type'].replace(source_type_map)
         bool_cols = ['is_secure', 'is_httponly', 'has_expires', 'is_persistent', 'has_cross_site_ancestor']
         df[bool_cols] = df[bool_cols].astype(bool)
 
-        df['priority'] = df['priority'].replace({0: 'Low', 1: 'Medium', 2: 'High'})
         time_cols = ['creation_utc', 'expires_utc', 'last_access_utc', 'last_update_utc']
         df[time_cols] = df[time_cols].apply(lambda col: pd.to_datetime(
                 col.apply(win_to_unix_epoch), unit='s', utc=True, errors='coerce').dt.tz_localize(None)
@@ -186,7 +209,20 @@ def format_cookies_firefox(df):
     """Format given cookies dataframe for firefox browser_type."""
     try:
         logging.info('Formatting cookies...')
-        df['sameSite'] = df['sameSite'].replace({-1: '', 0: 'None', 1: 'Lax', 2: 'Strict'})
+        samesite_map = {
+            -1: '',
+            0: 'None',
+            1: 'Lax',
+            2: 'Strict'
+        }
+        source_scheme_map = {
+            0: 'Unset',
+            1: 'HTTP',
+            2: 'HTTPS',
+            4: 'File'
+        }
+        df['sameSite'] = df['sameSite'].replace(samesite_map)
+        df['schemeMap'] = df['schemeMap'].replace(source_scheme_map)
         bool_cols = ['isSecure', 'isHttpOnly', 'inBrowserElement', 'isPartitionedAttributeSet']
         df[bool_cols] = df[bool_cols].astype(bool)
 

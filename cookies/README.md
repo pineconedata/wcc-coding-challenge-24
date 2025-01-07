@@ -3,8 +3,9 @@ This Python script uses Selenium to scrape cookies from webpages and export them
 
 ## Features
 - Scrapes cookies from a specified URL using Selenium WebDriver.
+- Formats the cookies to improve readability and consistency.
 - Exports the cookies data to an Excel file.
-- Supports headless browsing mode (i.e., no browser window is opened during the scraping process).
+- Supports headless browsing mode (where no browser window is opened during the scraping process).
 - Logs the process, including successful operations and error messages.
 - Handles errors related to WebDriver setup and cookie retrieval.
 - Automatically cleans up resources (webdriver, temporary directory), even on failures.
@@ -69,11 +70,10 @@ The script outputs an Excel file (such as `cookies_data_firefox_webdriver.xlsx`)
 There may be additional columns in the export file (such as `priority` or `creationTime`), especially if the `cookie_method` is set to `database`. 
 
 ### Example
-```
 | name          | value                        | path | domain                | secure | httpOnly | sameSite | expiry     |
 |---------------|------------------------------|------|-----------------------|--------|----------|----------|------------|
 | sampleCookie1 | this is a secure sample cookie | /    | www.pineconedata.com  | True   | FALSE    | Lax      | 1736828073 |
-```
+
 
 ### Column Mappings
 There are a few columns for the `database` `cookie_method` that store raw integer value instead of string values. For example, certain columns like `sameSite` are mapped from integer values like `2` to strings like `Lax`. The formatting step maps the integer values to the string values. The mappings were defined by looking at the source code for each browser. 

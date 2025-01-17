@@ -232,13 +232,22 @@ def main():
         if all_additional_urls:
             all_additional_urls = [(url, link_text, source_url) for url, link_text, source_url
                                    in all_additional_urls if url not in urls]
-            logging.info(f'Extracted {len(all_additional_urls)} additional unique URLs.')
+            # combine link_text and source_url values for duplicate URLs
+            url_dict = {}
             for url, link_text, source_url in all_additional_urls:
+                if url not in url_dict:
+                    url_dict[url] = {'link_text': [link_text], 'source_url': [source_url]}
+                else:
+                    url_dict[url]['link_text'].append(link_text)
+                    url_dict[url]['source_url'].append(source_url)
+            logging.info(f'Extracted {len(url_dict)} additional unique URLs.')
+            # process each additional URL
+            for url, content in url_dict.items():
                 data = validate_url(url, urls_to_exclude, phrases_to_exclude, first_party_domains, 
                                     request_timeout, False)
                 additional_urls = data.pop('additional_urls')
-                data['link_text'] = link_text
-                data['source_url'] = source_url
+                data['link_text'] = content['link_text']
+                data['source_url'] = content['source_url']
                 write_data(data_file, **data)
 
 

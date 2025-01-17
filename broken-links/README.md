@@ -19,8 +19,9 @@ This Python script validates URLs from a given sitemap, checking for HTTP errors
   - csv
   - json
   - logging
+  - an XML parser (lxml is used in the requirements.txt file)
 
-You can install the required libraries using `pip` or your preferred package manager.
+You can install the required libraries using `pip` or your preferred package manager. Requirements are listed in [requirements.txt](requirements.txt).
 
 ## Configuration
 The script uses a configuration JSON file (`config.json`) to define various settings. Here is an example configuration file:

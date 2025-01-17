@@ -30,7 +30,7 @@ Before running this script, you need the following:
   - sqlite3
     - only used with `cookie_method = database`
 
-You can install the required libraries using `pip` or your preferred package manager.
+You can install the required libraries using `pip` or your preferred package manager. The full list of required packages is in [requirements.txt](requirements.txt).
 
 ## Configuration
 Configuration options are set within the script itself. 

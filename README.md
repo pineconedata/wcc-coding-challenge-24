@@ -25,3 +25,5 @@ During the 25 days of the challenge, there were [43 commits](https://github.com/
     - Project files are in the `cookies` folder of this directory
 - [ ] Django App
     - Did not have time to start on this project
+
+![Certificate](certificate.png "Certificate")
